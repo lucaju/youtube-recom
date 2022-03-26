@@ -1,0 +1,12 @@
+{
+    "query": ["Lula PT"],
+    "name": "filename",
+    "searches": 2, 
+    "branch": 2,
+    "depth": 2,
+    "alltime": false,
+    "gl": "",
+    "language": "",
+    "recent": false,
+    "loopok": true
+}
