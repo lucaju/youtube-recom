@@ -1,2 +1,6 @@
-/python
+node_modules
+python
+
 /.env
+/.env-cmdrc.js
+/results
