@@ -12,7 +12,6 @@ export interface IVideo {
   title?: string;
   description?: string;
   duration?: string;
-  // hastags?: Types.Array<string>;
   hastags?: string[];
   uploadDate?: string;
   datePublished?: string;
@@ -24,7 +23,6 @@ export interface IVideo {
   likes?: number;
   comments?: number;
 
-  // recomendations: Types.DocumentArray<IVideoRecommended>;
   recomendations: IVideoRecommended[];
 
   collectedAt: Date;
@@ -37,42 +35,29 @@ export interface IVideoRecommended {
   title?: string;
 }
 
-export interface YTVideo {
-  //Collected at th first time the video is visited
+export interface IYTvideo {
   id: string;
   title?: string;
   description?: string;
   duration?: string;
-  // hastags?: Types.Array<string>;
-  hastags?: string[];
+  hastags?: Types.Array<string>;
   uploadDate?: string;
   datePublished?: string;
   paid?: boolean;
-  collectedAt: Date;
   channel?: IChannel;
-
-  //collected every time the video is recomended
-  watched?: Types.DocumentArray<YTVideoWatched>;
-
-  //calculated / update everytime the video is recommended
-  views: number;
-  likes: number;
-  comments: number;
-  recommended: number;
-  minDepth: number;
+  watched?: Types.DocumentArray<IYTvideoWatched>;
 }
 
-export interface YTVideoWatched {
-  id?: Types.ObjectId;
-  keyword: string; //seed searched keyword
-  watchedAt: Date; //date
-
-  // the corrent data the recommendation
+export interface IYTvideoWatched {
+  id: string;
+  title?: string;
+  keyword: string;
+  date: Date;
   views: number;
   likes: number;
   comments: number;
   depth: number;
   recommended: number;
   recommendations: Types.DocumentArray<IVideoRecommended>;
-  // recomendations: IVideoRecommended[];
+  details?: Types.Subdocument<IYTvideo>;
 }

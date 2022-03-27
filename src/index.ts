@@ -1,20 +1,40 @@
-import kleur from 'kleur';
-import config from './config.json';
+import { readJson } from 'fs-extra';
+import { blue, magenta, white } from 'kleur';
+import browser from './browser';
+import { argv, config, Inquerer, setConfig } from './config';
+import db from './db';
 import Scraper from './scraper';
-import pupeteer from './service/browser';
-import db from './service/db';
 
-const run = async () => {
+//Initial Setup
+(async () => {
+  //@ts-ignore
+  if (argv.queries) {
+    setConfig(argv);
+  } else {
+    const configJson = await readJson('config.json').catch(() => null);
+    if (configJson) {
+      setConfig(configJson);
+    } else {
+      const result = await Inquerer();
+      setConfig(result);
+    }
+  }
+
+  run();
+})();
+
+async function run() {
   const now = new Date();
-  console.log(kleur.magenta(`Scraping Youtube Recommendations: ${now}\n`));
+  console.log(magenta(`Scraping Youtube Recommendations: ${now}\n`));
 
   await db.connect();
-  await pupeteer.launch();
 
-  const queries = config.query;
+  await browser.launch();
 
-  console.log(kleur.white('Queries:'));
-  console.log(kleur.blue(queries.join(',')));
+  const queries = config.queries;
+
+  console.log(white('Queries:'));
+  console.log(blue(queries.join(',')));
 
   // * Each Keyword
   for (const query of queries) {
@@ -28,10 +48,8 @@ const run = async () => {
   // await sendEmail();
 
   //done
-  await pupeteer.close();
+  await browser.close();
   db.close();
 
-  console.log(kleur.magenta('\nDone'));
-};
-
-run();
+  console.log(magenta('\nDone'));
+}

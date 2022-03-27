@@ -1,6 +1,6 @@
 import { Browser, ElementHandle, Page } from 'puppeteer';
-import config from '../config.json';
-import { getBrowser } from '../service/browser';
+import { getBrowser } from '../browser';
+import { config } from '../config';
 import type { IVideo, IVideoRecommended } from '../types';
 
 let browser: Browser;

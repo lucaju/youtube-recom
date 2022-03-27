@@ -1,5 +1,5 @@
 import kleur from 'kleur';
-import pupeteer from './service/browser';
+import pupeteer from './browser';
 import { watchPage } from './scraper/watch';
 
 const ytID = 'uBY1AoiF5Vo';
@@ -9,7 +9,7 @@ const run = async () => {
 
   await pupeteer.launch({ headless: false });
   await watchPage({ id: ytID });
-  // await pupeteer.close();
+  await pupeteer.close();
 
   console.log(kleur.magenta('\nDone'));
 };

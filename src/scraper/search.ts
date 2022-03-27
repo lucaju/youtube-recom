@@ -1,7 +1,7 @@
 import kleur from 'kleur';
 import { ElementHandle } from 'puppeteer';
-import config from '../config.json';
-import { getBrowser } from '../service/browser';
+import { getBrowser } from '../browser';
+import { config } from '../config';
 import type { IVideoRecommended, SortType } from '../types';
 
 export const searchResults = async (query: string) => {
@@ -20,7 +20,7 @@ export const searchResults = async (query: string) => {
       }
 
       const headers = request.headers();
-      headers['Accept-Language'] = config.language;
+      headers['Accept-Language'] = config.language ?? '';
       request.continue({ headers });
     });
   }

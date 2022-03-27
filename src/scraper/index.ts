@@ -1,13 +1,16 @@
 import fs from 'fs-extra';
 import kleur, { gray, magenta, red } from 'kleur';
+import { Types } from 'mongoose';
 import emoji from 'node-emoji';
 import ora from 'ora';
-import config from '../config.json';
-import db from '../service/db';
-import type { IVideo, IVideoRecommended, YTVideo, YTVideoWatched } from '../types';
+import { config } from '../config';
+import { dbConnected } from '../db';
+import * as YTRecommendations from '../db/routes/YTRecommendations';
+import * as YTVideo from '../db/routes/YTVideo';
+import * as YTVideoWatched from '../db/routes/YTVideoWatched';
+import type { IVideo, IVideoRecommended, IYTvideo, IYTvideoWatched } from '../types';
 import { searchResults } from './search';
 import { watchPage } from './watch';
-import { Types } from 'mongoose';
 
 const spinner = ora({ spinner: 'dots', color: 'blue', stream: process.stdout });
 
@@ -120,14 +123,20 @@ class Scraper {
     return video;
   };
 
+  //* Saving
+
   async save() {
     await this.saveToFile();
-    await this.saveCollectionToDB();
 
+    if (!dbConnected) return;
+
+    await this.saveCollectionToDB();
     for (const video of this.videos) {
       await this.saveToDB(video);
     }
   }
+
+  //* Saving DB
 
   private async saveCollectionToDB() {
     const results = {
@@ -135,46 +144,61 @@ class Scraper {
       date: this.date,
       videos: this.videos,
     };
-    await db.saveCollection(results);
+    await YTRecommendations.save(results);
   }
 
   private async saveToDB(video: IVideo) {
-    let YTVideo = await db.getVideo(video.id);
-    if (!YTVideo) {
-      const newVideo: YTVideo = {
-        id: video.id,
-        title: video.title,
-        description: video.description,
-        duration: video.duration,
-        hastags: video.hastags,
-        uploadDate: video.uploadDate,
-        datePublished: video.datePublished,
-        paid: video.paid,
-        collectedAt: video.collectedAt,
-        channel: video.channel,
-        views: video.views ?? -1,
-        likes: video.likes ?? -1,
-        comments: video.comments ?? -1,
-        recommended: video.recommended,
-        minDepth: video.depth,
-      };
+    const isWatched = await YTVideoWatched.isWatchedToday(this.name, video.collectedAt);
+    console.log('isWatched?', isWatched)
+    if (isWatched) return;
+    
 
-      YTVideo = await db.saveVideo(newVideo);
-    }
+    const ytVideo = await YTVideo.getVideo(video.id);
+    if (!ytVideo) await this.saveVideoToDB(video);
 
-    const watched: YTVideoWatched = {
-      keyword: this.name,
-      watchedAt: video.collectedAt,
-      views: video.views ?? -1,
-      likes: video.likes ?? -1,
-      comments: video.comments ?? -1,
-      depth: video.depth,
-      recommended: video.recommended,
-      recommendations: video.recomendations as Types.DocumentArray<IVideoRecommended>,
+    await this.saveVideoWatchedToDB(video);
+  }
+
+  private async saveVideoToDB(video: IVideo) {
+    const { id, title, description, duration, hastags, uploadDate, datePublished, paid, channel } =
+      video;
+
+    const newVideo: IYTvideo = {
+      id,
+      title,
+      description,
+      duration,
+      hastags: hastags as Types.Array<string>,
+      uploadDate,
+      datePublished,
+      paid,
+      channel,
     };
 
-    await db.insertVideoWatch(video.id, watched);
+    return await YTVideo.save(newVideo);
   }
+
+  private async saveVideoWatchedToDB(video: IVideo) {
+    const { id, title, collectedAt, views, likes, comments, depth, recommended, recomendations } =
+      video;
+
+    const watched: IYTvideoWatched = {
+      id,
+      title,
+      keyword: this.name,
+      date: collectedAt,
+      views: views ?? -1,
+      likes: likes ?? -1,
+      comments: comments ?? -1,
+      depth,
+      recommended,
+      recommendations: recomendations as Types.DocumentArray<IVideoRecommended>,
+    };
+
+    return await YTVideoWatched.save(watched);
+  }
+
+  //* Saving file
 
   private async saveToFile() {
     const results = {
