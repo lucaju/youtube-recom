@@ -8,7 +8,7 @@
     "Recommendation"
   ],
   "scripts": {
-    "start-dev": "env-cmd -e development ts-node src/index.ts",
+    "start": "env-cmd -e development ts-node src/index.ts",
     "scrape-one": "env-cmd -e development ts-node src/scrapeOne.ts",
     "cm": "git-cz"
   },
@@ -18,15 +18,19 @@
     "@sendgrid/mail": "^7.4.2",
     "env-cmd": "^10.1.0",
     "fs-extra": "^10.0.1",
+    "inquirer": "^8.2.2",
     "kleur": "^4.1.4",
     "mongoose": "^6.2.7",
     "node-emoji": "^1.10.0",
     "ora": "^5.4.1",
-    "puppeteer": "^13.5.1"
+    "puppeteer": "^13.5.1",
+    "yargs": "^17.4.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
+    "@types/inquirer": "^8.2.0",
     "@types/node-emoji": "^1.8.1",
+    "@types/yargs": "^17.0.10",
     "@typescript-eslint/eslint-plugin": "^5.13.0",
     "@typescript-eslint/parser": "^5.13.0",
     "commitizen": "^4.2.4",
