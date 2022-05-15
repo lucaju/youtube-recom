@@ -60,6 +60,20 @@ export const Inquerer = async () => {
       message: `Limit by country. Use contry code. ${dim('eg. "CA"')}`,
       suffix: ` ${gray('[optional]')}`,
     },
+    {
+      type: 'number',
+      name: 'hour',
+      message: `This scrits runs once a day. What time (hour) it should be scheduled? Use language [0-23]`,
+      default: defaults.hour,
+      suffix: ` ${gray('[optional]')}`,
+    },
+    {
+      type: 'input',
+      name: 'timezone',
+      message: `Specify the timezone for the execution. This will modify the actual time relative to your timezone. If the timezone is invalid, an error is thrown. You can check all timezones available at Luxon Timezone Website.`,
+      default: '',
+      suffix: ` ${gray('[optional]')}`,
+    },
   ]);
 
   return result;

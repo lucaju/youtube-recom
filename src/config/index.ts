@@ -1,6 +1,10 @@
 export { argv } from './argv';
 export { Inquerer } from './inquerer';
 
+interface Cron {
+  hour: number;
+  timezone?: string;
+}
 interface IConfig {
   queries: string[];
   searches: number;
@@ -8,6 +12,7 @@ interface IConfig {
   depth: number;
   gl?: string;
   language?: string;
+  cron: Cron;
 }
 
 // * defaults
@@ -19,6 +24,8 @@ export const defaults = {
   maxBranch: 5,
   depth: 2,
   maxDepth: 5,
+  hour: 20,
+  timezone: undefined,
 };
 
 export let config: IConfig = {
@@ -26,6 +33,9 @@ export let config: IConfig = {
   searches: defaults.searches,
   branch: defaults.branch,
   depth: defaults.depth,
+  cron: {
+    hour: defaults.hour,
+  },
 };
 
 export const setConfig = (values: any) => {
@@ -74,7 +84,12 @@ export const setConfig = (values: any) => {
   const gl = values.gl !== '' ? values.gl : undefined;
   const language = values.language !== '' ? values.language : undefined;
 
-  config = { queries, searches, branch, depth, gl, language };
+  const hour = values.hour ?? defaults.hour;
+  const timezone = values.cron?.timezone !== '' ? values.cron.timezone : defaults.timezone;
+
+  const cron: Cron = { hour, timezone };
+
+  config = { queries, searches, branch, depth, gl, language, cron };
 
   return config;
 };

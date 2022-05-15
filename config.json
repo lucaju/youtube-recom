@@ -1,8 +1,12 @@
 {
     "queries": ["Kiasmos"],
-    "searches": 2, 
-    "branch": 2,
-    "depth": 2,
+    "searches": 3, 
+    "branch": 3,
+    "depth": 3,
     "gl": "",
-    "language": ""
+    "language": "",
+    "cron": {
+        "hour": 20,
+        "timezone": "America/Sao_Paulo"
+    }
 }

@@ -37,4 +37,16 @@ export const argv = yargs(hideBin(process.argv))
       string: true,
       description: 'Limit by language. Use language code. eg. "en-CA"',
     },
+    hour: {
+      number: true,
+      description:
+        'This scrits runs once a day. What time (hour) it should be scheduled? Use language [0-23]',
+      default: 20,
+    },
+    timezone: {
+      string: true,
+      description:
+        '`Specify the timezone for the execution. This will modify the actual time relative to your timezone. If the timezone is invalid, an error is thrown. You can check all timezones available at Luxon Timezone Website.',
+      default: '',
+    },
   }).argv;
