@@ -134,6 +134,8 @@ const getMetadata = async (page: Page) => {
   // console.log(commentsCount);
   const comments = commentsCount ? cleanCount(commentsCount) : -1;
 
+  const adCompanion = await getAdCompanion(page);
+
   // * Results
   const videoDetails: Partial<IVideo> = {
     title,
@@ -150,10 +152,28 @@ const getMetadata = async (page: Page) => {
     views,
     likes,
     comments,
+    adCompanion,
   };
 
   // console.log(videoDetails);
   return videoDetails;
+};
+
+const getAdCompanion = async (page: Page) => {
+  const container = await page.$('#companion');
+  if (!container) return;
+
+  const block = await page.$('#block > div#text');
+  if (!block) return;
+
+  const title = await block.$eval('div#header', (content) => content.innerHTML.trim());
+  const domain = await block.$eval('div#desc > span#domain', (content) => content.innerHTML.trim());
+
+  if (!title && !domain) return;
+
+  const adCompanion: IAdCompanion = { title, domain };
+
+  return adCompanion;
 };
 
 const getRecommendations = async (page: Page) => {

@@ -24,6 +24,7 @@ export interface IVideo {
   comments?: number;
 
   recomendations: IVideoRecommended[];
+  adCompanion?: IAdCompanion;
 
   collectedAt: Date;
   depth: number;
