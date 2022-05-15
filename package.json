@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "start": "env-cmd -e development ts-node src/index.ts",
-    "scrape-one": "env-cmd -e development ts-node src/scrapeOne.ts",
+    "collect-now": "env-cmd -e development ts-node src/collectNow.ts",
+    "collect-one": "env-cmd -e development ts-node src/scrapeOne.ts",
     "cm": "git-cz"
   },
   "author": "Luciano Frizzera <lucaju@gmail.com> (luciano.fluxo.art.br)",
