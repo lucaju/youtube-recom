@@ -1,3 +1,3 @@
-export { YTRecommendationsModel, YTRecommendationsSchema } from './YTRecommendations';
-export { YTVideoModel, YTVideoSchema } from './YTVideo';
-export { YTVideoWatchedModel, YTVideoWatchedSchema } from './YTVideoWatched';
+export { RecommendationModel, RecommendationSchema } from './Recommendations';
+export { VideoModel, VideoSchema } from './Video';
+export { WatchedVideoModel, WatchedVideoSchema } from './WatchedVideo';

@@ -1,7 +1,7 @@
 import { Model, model, Schema } from 'mongoose';
-import { IVideoRecommended, IYTvideoWatched } from '../../types';
+import { IRecommendedVideo, IWatched } from '../../types';
 
-export const YTVideoWatchedSchema = new Schema<IYTvideoWatched, Model<IYTvideoWatched>>(
+export const WatchedVideoSchema = new Schema<IWatched, Model<IWatched>>(
   {
     id: { type: String, required: true },
     title: String,
@@ -13,23 +13,21 @@ export const YTVideoWatchedSchema = new Schema<IYTvideoWatched, Model<IYTvideoWa
     depth: { type: Number, default: 0 },
     recommended: Number,
     recommendations: [
-      new Schema<IVideoRecommended>({
-        id: String,
+      new Schema<IRecommendedVideo>({ id: String,
         title: String,
       }),
     ],
-    // details: { type: Schema.Types.ObjectId, ref: 'YTVideo' },
   },
   { strict: false, timestamps: true }
 );
 
-YTVideoWatchedSchema.virtual('details', {
-  ref: 'YTVideo',
+WatchedVideoSchema.virtual('details', {
+  ref: 'Video',
   localField: 'id',
   foreignField: 'id',
 });
 
-export const YTVideoWatchedModel = model<IYTvideoWatched, Model<IYTvideoWatched>>(
-  'YTVideosWatched',
-  YTVideoWatchedSchema
+export const WatchedVideoModel = model<IWatched, Model<IWatched>>(
+  'WatchedVideos',
+  WatchedVideoSchema
 );

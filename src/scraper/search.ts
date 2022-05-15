@@ -2,7 +2,7 @@ import kleur from 'kleur';
 import { ElementHandle } from 'puppeteer';
 import { getBrowser } from '../browser';
 import { config } from '../config';
-import type { IVideoRecommended, SortType } from '../types';
+import type { IRecommendedVideo, SortType } from '../types';
 
 export const searchResults = async (query: string) => {
   const maxSearches = config.searches <= 10 ? config.searches : 10;
@@ -34,7 +34,7 @@ export const searchResults = async (query: string) => {
 
   const items = results.slice(0, maxSearches);
 
-  const videos: IVideoRecommended[] = [];
+  const videos: IRecommendedVideo[] = [];
 
   for (const item of items) {
     const video = await getDetails(item);
@@ -59,7 +59,7 @@ const getDetails = async (item: ElementHandle<Element>) => {
 
   const title = await item.$eval('h3 > a > yt-formatted-string', (content) => content.innerHTML);
 
-  const video: IVideoRecommended = { id, title };
+  const video: IRecommendedVideo = { id, title };
 
   return video;
 };

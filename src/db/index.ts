@@ -2,24 +2,15 @@ import mongoose from 'mongoose';
 
 export let dbConnected = false;
 
-// import { red } from 'kleur';
-// const {logError} = require('../logs/datalog');
-
 export const connect = async () => {
-  const mongoDB = process.env.MONGODB_URL;
-  if (!mongoDB) {
+  const mongoDBUrl = process.env.MONGODB_URL;
+  if (!mongoDBUrl) {
     dbConnected = false;
     return dbConnected;
   }
 
-  try {
-    await mongoose.connect(mongoDB);
-    dbConnected = true;
-  } catch (err) {
-    dbConnected = false;
-    // console.log(red(err.name));
-    // logError('Mongoose',err.name);
-  }
+  const mongo = await mongoose.connect(mongoDBUrl).catch(() => false);
+  dbConnected = !!mongo;
   return dbConnected;
 };
 

@@ -1,14 +1,15 @@
 import fs from 'fs-extra';
 import kleur, { gray, magenta, red } from 'kleur';
+import { DateTime } from 'luxon';
 import { Types } from 'mongoose';
 import emoji from 'node-emoji';
 import ora from 'ora';
 import { config } from '../config';
 import { dbConnected } from '../db';
-import * as YTRecommendations from '../db/routes/YTRecommendations';
-import * as YTVideo from '../db/routes/YTVideo';
-import * as YTVideoWatched from '../db/routes/YTVideoWatched';
-import type { IVideo, IVideoRecommended, IYTvideo, IYTvideoWatched } from '../types';
+import * as Recommendations from '../db/routes/Recommendation';
+import * as Video from '../db/routes/Video';
+import * as WatchedVideo from '../db/routes/WatchedVideo';
+import type { IRecommendedVideo, IVideo, IWatched, IYTvideo } from '../types';
 import { searchResults } from './search';
 import { watchPage } from './watch';
 
@@ -17,7 +18,7 @@ const spinner = ora({ spinner: 'dots', color: 'blue', stream: process.stdout });
 class Scraper {
   readonly name: string;
   readonly branching: number;
-  readonly date: string;
+  readonly date: DateTime;
   readonly maxDepth: number;
 
   recommendedVideos: any[];
@@ -28,9 +29,7 @@ class Scraper {
     this.branching = config.branch ?? 1;
     this.maxDepth = config.depth ?? 1;
 
-    const now = new Date();
-    //round date to the hour
-    this.date = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}T${now.getHours()}:00`;
+    this.date = DateTime.now().setZone(config.cron.timezone);
 
     this.recommendedVideos = [];
     this.videos = [];
@@ -50,7 +49,7 @@ class Scraper {
 
     for (const video of searchCollection) {
       console.log(`Starting from ${kleur.bgMagenta().black(`${video.title}`)}`);
-      const recommendations = await this.getReccommendationsFor(video);
+      const recommendations = await this.getRecommendationsFor(video);
       this.recommendedVideos = [...this.recommendedVideos, ...recommendations];
       console.log('\n');
     }
@@ -66,7 +65,7 @@ class Scraper {
   }
 
   //* Recursive function
-  private async getReccommendationsFor(video: IVideo | IVideoRecommended, depth = 0) {
+  private async getRecommendationsFor(video: IVideo | IRecommendedVideo, depth = 0) {
     const { id, title } = video;
     if (depth > this.maxDepth) return [video];
 
@@ -107,11 +106,11 @@ class Scraper {
     this.videos.push(videoInfo);
 
     // drill down on each branch
-    let allRecommendations: (IVideoRecommended | IVideo)[] = [];
+    let allRecommendations: (IRecommendedVideo | IVideo)[] = [];
     const currentVideoRecoms = videoInfo.recomendations?.slice(0, this.branching) ?? [];
 
     for (const recom of currentVideoRecoms) {
-      const recommendations = await this.getReccommendationsFor(recom, depth + 1);
+      const recommendations = await this.getRecommendationsFor(recom, depth + 1);
       allRecommendations = [...allRecommendations, ...recommendations];
     }
 
@@ -131,6 +130,7 @@ class Scraper {
     if (!dbConnected) return;
 
     await this.saveCollectionToDB();
+
     for (const video of this.videos) {
       await this.saveToDB(video);
     }
@@ -141,19 +141,18 @@ class Scraper {
   private async saveCollectionToDB() {
     const results = {
       keyword: this.name,
-      date: this.date,
+      date: this.date.toBSON(),
       videos: this.videos,
     };
-    await YTRecommendations.save(results);
+
+    await Recommendations.save(results);
   }
 
   private async saveToDB(video: IVideo) {
-    const isWatched = await YTVideoWatched.isWatchedToday(this.name, video.collectedAt);
-    console.log('isWatched?', isWatched)
+    const isWatched = await WatchedVideo.isWatchedToday(this.name, video.id, video.collectedAt);
     if (isWatched) return;
-    
 
-    const ytVideo = await YTVideo.getVideo(video.id);
+    const ytVideo = await Video.getVideo(video.id);
     if (!ytVideo) await this.saveVideoToDB(video);
 
     await this.saveVideoWatchedToDB(video);
@@ -175,14 +174,14 @@ class Scraper {
       channel,
     };
 
-    return await YTVideo.save(newVideo);
+    return await Video.save(newVideo);
   }
 
   private async saveVideoWatchedToDB(video: IVideo) {
     const { id, title, collectedAt, views, likes, comments, depth, recommended, recomendations } =
       video;
 
-    const watched: IYTvideoWatched = {
+    const watched: IWatched = {
       id,
       title,
       keyword: this.name,
@@ -192,10 +191,10 @@ class Scraper {
       comments: comments ?? -1,
       depth,
       recommended,
-      recommendations: recomendations as Types.DocumentArray<IVideoRecommended>,
+      recommendations: recomendations as Types.DocumentArray<IRecommendedVideo>,
     };
 
-    return await YTVideoWatched.save(watched);
+    return await WatchedVideo.save(watched);
   }
 
   //* Saving file
@@ -203,7 +202,7 @@ class Scraper {
   private async saveToFile() {
     const results = {
       keyword: this.name,
-      date: this.date,
+      date: this.date.toISO(),
       videos: this.videos,
     };
 

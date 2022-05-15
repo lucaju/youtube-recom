@@ -1,27 +1,25 @@
+import { DateTime } from 'luxon';
 import { Browser, ElementHandle, Page } from 'puppeteer';
 import { getBrowser } from '../browser';
 import { config } from '../config';
-import type { IVideo, IVideoRecommended } from '../types';
+import type { IAdCompanion, IRecommendedVideo, IVideo } from '../types';
 
 let browser: Browser;
 
-export const watchPage = async ({ id }: IVideo | IVideoRecommended) => {
+export const watchPage = async ({ id }: IVideo | IRecommendedVideo) => {
   const url = `https://www.youtube.com/watch?v=${id}`;
 
   browser = await getBrowser();
   const page = await browser.newPage();
 
   await page.goto(url);
-  // page.setDefaultTimeout(180000);
-  // page.waitForTimeout(5000);
 
   const metadata = await getMetadata(page);
   if (!metadata) return;
 
-  const recomendations: IVideoRecommended[] = await getRecommendations(page);
+  const recomendations: IRecommendedVideo[] = await getRecommendations(page);
 
-  // const collectedAt = new Date().toISOString();
-  const collectedAt = new Date();
+  const collectedAt = DateTime.now().setZone(config.cron.timezone).toBSON();
 
   const video: IVideo = {
     id,
@@ -55,7 +53,6 @@ const getMetadata = async (page: Page) => {
 
     return metaObject;
   });
-  // console.log(metas);
 
   const title = metas.name;
   const description = metas.description;
@@ -99,17 +96,15 @@ const getMetadata = async (page: Page) => {
       (content) => content.innerHTML
     )
     .catch(() => '');
-  // console.log(viewCount);
   const views = cleanCount(viewCount);
 
   // * Hashtags
   const hastags = await container.$$eval('div > .super-title > a', (content) =>
     content.map((n) => n.innerHTML)
   );
-  // console.log(hastags);
 
   const interactButtons = await container.$$('div > ytd-toggle-button-renderer');
-  //first button: Like
+  // first button: Like
   // second button: dislike
 
   // * Likes Exact
@@ -118,20 +113,18 @@ const getMetadata = async (page: Page) => {
     content.getAttribute('aria-label')
   );
   const likes = likesExactCount ? cleanCount(likesExactCount) : -1;
-  // console.log(likes_exact);
 
   // * Comments
   const commentsAvailable = await page
     .waitForSelector('ytd-comments-header-renderer', { timeout: 5000 })
     .catch(() => null);
   const commentsContainer = commentsAvailable ? await page.$('ytd-comments-header-renderer') : null;
-  // console.log(container);
 
   const commentsCount = await commentsContainer?.$eval(
     'div > h2 > yt-formatted-string > span',
     (content) => content.innerHTML
   );
-  // console.log(commentsCount);
+
   const comments = commentsCount ? cleanCount(commentsCount) : -1;
 
   const adCompanion = await getAdCompanion(page);
@@ -155,7 +148,6 @@ const getMetadata = async (page: Page) => {
     adCompanion,
   };
 
-  // console.log(videoDetails);
   return videoDetails;
 };
 
@@ -182,11 +174,11 @@ const getRecommendations = async (page: Page) => {
   const container = await page.$('ytd-watch-next-secondary-results-renderer');
   if (!container) return [];
 
-  // * Reccomendation List
+  // * Recommendation List
   const items = await page.$$('ytd-compact-video-renderer');
 
   // * Details
-  const recommendations: IVideoRecommended[] = [];
+  const recommendations: IRecommendedVideo[] = [];
 
   for (const item of items.splice(0, config.branch ?? 1)) {
     const videoRecomended = await getRecommendedVideoDetails(item);
@@ -209,7 +201,7 @@ const getRecommendedVideoDetails = async (item: ElementHandle<Element>) => {
   const title = await item.$eval('#video-title', (content) => content.innerHTML.trim());
 
   // * Results
-  const recommendedVideo: IVideoRecommended = { id, title };
+  const recommendedVideo: IRecommendedVideo = { id, title };
   return recommendedVideo;
 };
 

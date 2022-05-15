@@ -1,7 +1,7 @@
 import { Model, model, Schema } from 'mongoose';
 import { IChannel, IYTvideo } from '../../types';
 
-export const YTVideoSchema = new Schema<IYTvideo, Model<IYTvideo>>(
+export const VideoSchema = new Schema<IYTvideo, Model<IYTvideo>>(
   {
     id: { type: String, required: true, unique: true },
     title: String,
@@ -15,9 +15,9 @@ export const YTVideoSchema = new Schema<IYTvideo, Model<IYTvideo>>(
       id: String,
       name: String,
     }),
-    watched: [{ type: Schema.Types.ObjectId, ref: 'Watched' }],
+    watched: [{ type: Schema.Types.ObjectId, ref: 'WatchedVideos' }],
   },
   { strict: false, timestamps: true }
 );
 
-export const YTVideoModel = model<IYTvideo, Model<IYTvideo>>('YTVideos', YTVideoSchema);
+export const VideoModel = model<IYTvideo, Model<IYTvideo>>('Videos', VideoSchema);
