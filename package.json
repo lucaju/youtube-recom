@@ -15,31 +15,34 @@
   "author": "Luciano Frizzera <lucaju@gmail.com> (luciano.fluxo.art.br)",
   "license": "MIT",
   "dependencies": {
-    "@sendgrid/mail": "^7.4.2",
+    "@sendgrid/mail": "^7.6.2",
+    "cron": "^2.0.0",
     "env-cmd": "^10.1.0",
-    "fs-extra": "^10.0.1",
-    "inquirer": "^8.2.2",
+    "fs-extra": "^10.1.0",
+    "inquirer": "^8.2.4",
     "kleur": "^4.1.4",
-    "mongoose": "^6.2.7",
-    "node-emoji": "^1.10.0",
+    "luxon": "^2.4.0",
+    "mongoose": "^6.3.3",
+    "node-emoji": "^1.11.0",
     "ora": "^5.4.1",
-    "puppeteer": "^13.5.1",
-    "yargs": "^17.4.0"
+    "puppeteer": "^14.1.0",
+    "yargs": "^17.5.0"
   },
   "devDependencies": {
+    "@types/cron": "^2.0.0",
     "@types/fs-extra": "^9.0.13",
-    "@types/inquirer": "^8.2.0",
+    "@types/inquirer": "^8.2.1",
     "@types/node-emoji": "^1.8.1",
     "@types/yargs": "^17.0.10",
-    "@typescript-eslint/eslint-plugin": "^5.13.0",
-    "@typescript-eslint/parser": "^5.13.0",
+    "@typescript-eslint/eslint-plugin": "^5.23.0",
+    "@typescript-eslint/parser": "^5.23.0",
     "commitizen": "^4.2.4",
-    "eslint": "^8.10.0",
+    "eslint": "^8.15.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "git-cz": "^4.8.0",
-    "prettier": "^2.5.1",
+    "git-cz": "^4.9.0",
+    "prettier": "^2.6.2",
     "ts-node": "^10.7.0",
-    "typescript": "^4.6.2"
+    "typescript": "^4.6.4"
   }
 }
