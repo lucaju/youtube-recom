@@ -1,0 +1,14 @@
+.git
+npm-debug.log
+/node_modules
+
+node_modules
+python
+
+/*.env
+/.env-cmdrc.js
+/results
+/traefik
+/mongodb
+/public
+.DS_Store
