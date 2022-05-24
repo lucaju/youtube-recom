@@ -37,7 +37,7 @@ RUN addgroup -S pptruser && adduser -S -G pptruser pptruser \
 # Run everything after as non-privileged user.
 USER pptruser
 
-RUN NODE_OPTIONS=--max_old_space_size=4096 npm run build
+# RUN NODE_OPTIONS=--max_old_space_size=4096 npm run build
 
 CMD ["pm2-runtime", "ecosystem.config.js"]
 
