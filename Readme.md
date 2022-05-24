@@ -3,7 +3,7 @@
 * Author: Luciano Frizzera*
 * Inspired by Guillaume Chaslot*
 
-This scripts starts from a search query on youtube and:
+This scripts starts from a search keyword on youtube and:
 
 1) gets the N first search results
 2) follows the first M recommendations

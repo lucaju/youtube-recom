@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  traefik:
+    container_name: traefik
+    image: traefik:v2.6
+    command: --configFile=/etc/traefik/traefik.yml
+    ports:
+      - 80:80
+      - 443:443
+      - 27019:27017 # only for accessing with Mongo Compasss locally
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/:/etc/traefik/
+      - ./traefik/certs:/certs # optional: using self-signed certificates
+      - ./traefik/log/:/var/log/traefik
+    networks:
+      - yt-scraper
+    restart: unless-stopped
+
+  youtube-scraper:
+    container_name: youtube-scraper-dev
+    build:
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./:/app/
+    depends_on:
+      - mongo
+    networks:
+      - yt-scraper
+    restart: unless-stopped
+
+  mongodb:
+    container_name: mongo
+    image: mongo
+    env_file: ./mongodb.env
+    volumes:
+      - ./mongodb/data/db:/data/db
+    networks:
+      - yt-scraper
+    restart: unless-stopped
+
+networks:
+  yt-scraper:

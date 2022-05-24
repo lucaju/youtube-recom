@@ -1,0 +1,19 @@
+{
+  "title": "Test",
+  "crawler": {
+    "keywords": ["REM", "Kiasmos"],
+    "seeds": 1,
+    "branches": 1,
+    "depth": 2,
+    "country": "",
+    "language": ""
+  },
+  "storage": {
+    "useDB": false,
+    "saveOnFile": true
+  },
+  "schedule": {
+    "hour": 20,
+    "timezone": "America/Sao_Paulo"
+  }
+}

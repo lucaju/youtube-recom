@@ -1,7 +1,10 @@
 node_modules
 python
 
-/.env
+/*.env
 /.env-cmdrc.js
 /results
-cron
+/traefik
+/mongodb
+/public
+.DS_Store
