@@ -81,7 +81,7 @@ router.get(
     */
 
     if (!req.query.id) return res.status(400).send({ msg: `Missing 'id' keyword` });
-    log.warn(magenta(`Scraping Youtube Recommendations: ${req.query.videoID}\n`));
+    log.warn(magenta(`Scraping Youtube Recommendations: ${req.query.id}\n`));
 
     const browser = await launchPuppeteer();
     const videos = await watchPage({ browser, ytId: req.query.id.toString() });
