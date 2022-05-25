@@ -18,7 +18,7 @@ services:
       - yt-scraper
     restart: unless-stopped
 
-  youtube-scraper:
+  youtube-recom:
     container_name: youtube-scraper-dev
     build:
       dockerfile: Dockerfile.dev
