@@ -19,7 +19,7 @@ services:
     restart: unless-stopped
 
   youtube-recom:
-    container_name: youtube-scraper-dev
+    container_name: youtube-recom
     build:
       dockerfile: Dockerfile.dev
     volumes:
