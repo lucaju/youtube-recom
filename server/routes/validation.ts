@@ -26,9 +26,9 @@ export const branches = Joi.number()
 export const depth = Joi.number()
   .empty()
   .integer()
-  .ruleset.min(0)
+  .ruleset.min(1)
   .max(MAX_VALUES.branches)
-  .rule({ message: `{#label} must be between 0 and ${MAX_VALUES.depth}` });
+  .rule({ message: `{#label} must be between 1 and ${MAX_VALUES.depth}` });
 
 export const country = Joi.string().empty().pattern(new RegExp('^[A-Z]{2}$')).messages({
   'string.pattern.base': `{#label} must be a country code. e.g., 'CA' for Canada`,

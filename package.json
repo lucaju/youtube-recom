@@ -13,17 +13,16 @@
     "start": "env-cmd -e production ts-node ./server/index.ts",
     "dev-server": "env-cmd -e development nodemon",
     "dev-server-docker": "env-cmd -e developmentDocker nodemon",
-    "collect-cron": "env-cmd -e development ts-node cli/collectCron/index.ts",
     "collect-once": "ts-node cli/collectOnce/index.ts",
     "collect-one": "ts-node cli/collectOne/index.ts",
     "cm": "git-cz",
     "start-gendoc": "ts-node swagger.ts"
   },
   "dependencies": {
+    "agenda": "^4.3.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.0",
     "celebrate": "^15.0.1",
-    "cron": "^2.0.0",
     "dotenv": "^16.0.1",
     "env-cmd": "^10.1.0",
     "express": "^4.18.1",
@@ -46,11 +45,11 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
-    "@types/cron": "^2.0.0",
     "@types/express": "^4.17.13",
     "@types/fs-extra": "^9.0.13",
     "@types/inquirer": "^8.2.1",
     "@types/jsonwebtoken": "^8.5.8",
+    "@types/luxon": "^2.3.2",
     "@types/node": "^17.0.35",
     "@types/node-emoji": "^1.8.1",
     "@types/nodemailer": "^6.4.4",
@@ -62,12 +61,10 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "git-cz": "^4.9.0",
-    "i": "^0.3.7",
     "nodemon": "^2.0.16",
-    "npm": "^8.10.0",
     "prettier": "^2.6.2",
     "swagger-autogen": "^2.21.2",
     "ts-node": "^10.8.0",
-    "typescript": "^4.6.4"
+    "typescript": "^4.7.2"
   }
 }

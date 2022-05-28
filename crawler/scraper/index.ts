@@ -79,7 +79,7 @@ class Scraper {
       log.info('\n');
     }
 
-    //Reorder by number of recomendations
+    //Reorder by number of recommendations
     this.videos = this.videos.sort((a, b) => {
       if (a.recommended > b.recommended) return -1;
       if (b.recommended < a.recommended) return 1;
@@ -113,7 +113,7 @@ class Scraper {
         msg: `${depthSignSeen} ${bumpRecom} ${ytId} | ${title}`,
       });
 
-      return videoInfo.recomendations?.slice(0, this.branches) ?? [];
+      return videoInfo.recommendations?.slice(0, this.branches) ?? [];
     }
 
     this.spinner.prefixText = `${gray(`${depthSign}`)}`;
@@ -146,7 +146,7 @@ class Scraper {
 
     // drill down on each branch
     let allRecommendations: (IRecommendedVideo | IVideo)[] = [];
-    const currentVideoRecoms = videoInfo.recomendations?.slice(0, this.branches) ?? [];
+    const currentVideoRecoms = videoInfo.recommendations?.slice(0, this.branches) ?? [];
 
     for (const recom of currentVideoRecoms) {
       const recommendations = await this.getRecommendationsFor(recom, depth + 1);

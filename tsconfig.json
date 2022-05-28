@@ -1,6 +1,6 @@
 {
   // "extends": "ts-node/node18/tsconfig.json",
-  "include": ["cli/**/*", "crawler/**/*", "db/**/*", "job/**/*", "server/**/*"],
+  "include": ["cli/**/*", "crawler/**/*", "db/**/*", "job/**/*", "server/**/*", "jobs/**/*"],
   /* Most ts-node options can be specified here using their programmatic names. */
   "ts-node": {
     // "transpileOnly": true,                 /* It is faster to skip typechecking. Remove if you want ts-node to do typechecking.*/

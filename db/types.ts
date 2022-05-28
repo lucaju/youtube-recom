@@ -1,9 +1,15 @@
+import { Job } from 'agenda';
 import { Types } from 'mongoose';
-import type { IAdCompanion, IChannel, ICrawlerConfig, IRecommendedVideo, IVideo } from '../crawler';
-import type { ISchedule, IStorage } from '../job';
-import Job from '../job';
+import type { ICrawlerConfig, IVideo } from '../crawler';
 
-type Role = 'admin' | 'user';
+export type UserRole = 'admin' | 'user';
+export type ScheduleFrenquency = 'minute' | 'hour' | 'day' | 'week' | 'month';
+
+export interface IProjectSchedule {
+  atTime?: string;
+  frequency: ScheduleFrenquency;
+  timezone?: string;
+}
 
 export interface IProjectStatus {
   running: boolean;
@@ -16,11 +22,10 @@ export interface IProject {
   active: boolean;
   crawler: ICrawlerConfig;
   owner: Types.ObjectId;
-  schedule: ISchedule;
+  schedule: IProjectSchedule;
   status: IProjectStatus;
-  storage: IStorage;
   title: string;
-  job?: Job
+  job?: Job;
 }
 
 export interface IRecommendation {
@@ -28,48 +33,14 @@ export interface IRecommendation {
   keyword: string;
   videos: IVideo[];
 
-  project?: Types.ObjectId;
+  project: Types.ObjectId;
 }
 
 export interface IUser {
   email: string;
   name: string;
-  role: Role;
+  role: UserRole;
   id?: string;
   password?: string;
   tokens?: string[];
-}
-
-export interface IYTvideo {
-  ytId: string;
-
-  adCompanion?: IAdCompanion;
-  channel?: IChannel;
-  datePublished?: Date;
-  description?: string;
-  duration?: string;
-  hastags?: Types.Array<string>;
-  paid?: boolean;
-  title?: string;
-  uploadDate?: Date;
-  watched?: Types.DocumentArray<IWatched>;
-
-  project?: Types.ObjectId;
-}
-
-export interface IWatched {
-  ytId: string;
-  comments: number;
-  date: Date;
-  depth: number;
-  keyword: string;
-  likes: number;
-  recommended: number;
-  recommendations: Types.DocumentArray<IRecommendedVideo>;
-  views: number;
-
-  details?: Types.Subdocument<IYTvideo>;
-  title?: string;
-
-  project?: Types.ObjectId;
 }

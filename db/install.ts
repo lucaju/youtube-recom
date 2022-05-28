@@ -1,6 +1,6 @@
 import { blue, green, yellow } from 'kleur';
 import log from 'loglevel';
-import { UserModel } from './models';
+import { UserModel } from './users';
 
 export const install = async () => {
   log.info(yellow('Initial Setup'));

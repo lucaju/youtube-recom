@@ -3,7 +3,7 @@ import path from 'path';
 import db from '../db';
 // import helmet from 'helmet';
 import { collect, project, users } from './routes';
-import { createIo } from './socket';
+// import { createIo } from './socket';
 
 // ? Check this: Express.js role-based permissions middleware: https://gist.github.com/joshnuss/37ebaf958fe65a18d4ff
 

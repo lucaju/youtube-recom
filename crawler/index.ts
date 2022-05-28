@@ -1,15 +1,14 @@
 import { blue, dim, green, magenta, white } from 'kleur';
 import log from 'loglevel';
 import { DateTime } from 'luxon';
-import { Browser } from 'puppeteer';
 import { launchPuppeteer } from './browser';
 import Scraper from './scraper';
-import type { ICrawlerConfig, IVideo } from './types';
+import type { ICrawlerConfig, ICrawlerResult } from './types';
 
 export * from './types';
 
 export const MAX_VALUES = {
-  keywords: 10,
+  keywords: 5,
   seeds: 5,
   branches: 5,
   depth: 5,
@@ -51,74 +50,43 @@ export const parseCrawlerValues = (values: ICrawlerConfig) => {
   return values;
 };
 
-export interface ICrawlerResult {
-  date: DateTime;
-  keyword: string;
-  videos: IVideo[];
-}
+export const crawler = async (config: ICrawlerConfig) => {
+  const { keywords, seeds, branches, depth, country, language } = config;
 
-class Crawler {
-  private readonly config: ICrawlerConfig;
-  private readonly projectId?: string;
+  const startTime = DateTime.now().setZone();
+  const browser = await launchPuppeteer();
 
-  private browser?: Browser;
-  private startTime: DateTime;
+  const startDate = DateTime.now();
+  log.info(magenta(`Scraping Youtube Recommendations: ${dim(`${startDate}`)}\n`));
 
-  constructor(config: ICrawlerConfig, projectId?: string) {
-    this.config = config;
+  log.info(white('Keywords:'));
+  log.info(blue(keywords.join(' | ')));
 
-    this.startTime = DateTime.now().setZone();
-    this.projectId = projectId;
-  }
+  const data: ICrawlerResult[] = [];
 
-  async collect() {
-    this.browser = await launchPuppeteer();
+  // * Each Keyword
+  for (const keyword of keywords) {
+    const scraper = new Scraper({ browser, keyword, seeds, branches, depth, country, language });
 
-    const startDate = DateTime.now();
-    log.info(magenta(`Scraping Youtube Recommendations: ${dim(`${startDate}`)}\n`));
+    await scraper.collect();
 
-    const keywords = this.config.keywords;
-
-    log.info(white('Keywords:'));
-    log.info(blue(keywords.join(' | ')));
-
-    const { seeds, branches, depth, country, language } = this.config;
-    const data: ICrawlerResult[] = [];
-
-    // * Each Keyword
-    for (const keyword of keywords) {
-      const scraper = new Scraper({
-        browser: this.browser,
-        keyword,
-        seeds,
-        branches,
-        depth,
-        country,
-        language,
-      });
-
-      await scraper.collect();
-
-      if (log.getLevel() <= log.levels.WARN) {
-        log.warn(blue(`Summary ${keyword}`));
-        console.table(scraper.videos, ['recommended', 'depth', 'title', 'views', 'likes']);
-      }
-
-      data.push({ date: this.startTime, keyword, videos: scraper.videos });
+    if (log.getLevel() <= log.levels.WARN) {
+      log.warn(blue(`Summary ${keyword}`));
+      console.table(scraper.videos, ['recommended', 'depth', 'title', 'views', 'likes']);
     }
 
-    //done
-    this.browser.close();
-
-    const endDate = DateTime.now();
-    const duration = endDate.diff(startDate, ['hours', 'minutes', 'seconds']);
-
-    log.info(magenta(`\nDone at ${dim(`${endDate}`)}`));
-    log.info(green(`(${duration.toHuman({ unitDisplay: 'short' })})`));
-    log.info('\n');
-
-    return data;
+    data.push({ date: startTime, keyword, videos: scraper.videos });
   }
-}
 
-export default Crawler;
+  //done
+  browser.close();
+
+  const endDate = DateTime.now();
+  const duration = endDate.diff(startDate, ['hours', 'minutes', 'seconds']);
+
+  log.info(magenta(`\nDone at ${dim(`${endDate}`)}`));
+  log.info(green(`(${duration.toHuman({ unitDisplay: 'short' })})`));
+  log.info('\n');
+
+  return data;
+};

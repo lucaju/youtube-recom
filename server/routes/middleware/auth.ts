@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { UserModel } from '../../../db/models';
+import { UserModel } from '../../../db/users';
 
 export const auth =
   (strategy?: string) => async (req: Request, res: Response, next: NextFunction) => {

@@ -1,7 +1,7 @@
 import { bgCyan, bgRed } from 'kleur';
 import log from 'loglevel';
 import mongoose from 'mongoose';
-import { initiate } from './initiate';
+import { initialize } from './initialize';
 
 export * from './types';
 
@@ -24,7 +24,7 @@ export const connect = async () => {
     ? log.warn(bgCyan().black(' MongoDB connected '))
     : log.warn(bgRed().black(' MongoDB id NOT connected '));
 
-  if (mongo) await initiate();
+  if (mongo) await initialize();
 
   return connected;
 };

@@ -37,6 +37,10 @@ export const argv = yargs(hideBin(process.argv))
       string: true,
       description: 'Limit by language. Use language code. eg. "en-CA"',
     },
+    saveOnFile: {
+      boolean: true,
+      description: 'Save results on file',
+    },
     verbose: {
       boolean: true,
       description: 'Verbose output',

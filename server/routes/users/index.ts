@@ -1,10 +1,10 @@
 import { celebrate, errors, Joi, Segments } from 'celebrate';
 import { Router } from 'express';
-import { UserModel } from '../../../db/models';
+import { UserModel } from '../../../db/users';
+import { emitIo } from '../../socket';
 import { httpHeaders } from '../headers';
 import { auth } from '../middleware/auth';
 import * as validation from './validation';
-import { emitIo } from '../../socket';
 
 export const router = Router();
 router.use(httpHeaders);

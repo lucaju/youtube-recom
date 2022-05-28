@@ -1,8 +1,8 @@
-import { readJson } from 'fs-extra';
+import fs, { readJson } from 'fs-extra';
 import { blue } from 'kleur';
 import log from 'loglevel';
-import type { ICrawlerConfig, IVideo } from '../../crawler';
-import Crawler, { parseCrawlerValues } from '../../crawler';
+import type { ICrawlerConfig, ICrawlerResult, IVideo } from '../../crawler';
+import { crawler, parseCrawlerValues } from '../../crawler';
 import { argv } from './argv';
 import { Inquerer } from './inquerer';
 
@@ -34,19 +34,37 @@ const initSetup = async () => {
   return config;
 };
 
+const saveToFile = async function (results: ICrawlerResult[]) {
+  const keywords = results.map(({ keyword }) => keyword);
+  const data = results.map(({ keyword, date, videos }) => ({
+    keyword,
+    date: date.toISO(),
+    videos,
+  }));
+
+  const result = {
+    date: new Date(),
+    keywords,
+    results: data,
+  };
+
+  const folder = 'results';
+  const file = `${keywords.join(',')}-${result.date}.json`;
+  await fs.outputJson(`${folder}/${file}`, result, { spaces: 2 });
+};
+
 //Initial Setup
 (async () => {
   const setup = parseCrawlerValues(await initSetup());
   if (!setup) return;
 
-  const project = new Crawler(setup);
-  const results = await project.collect();
+  const results = await crawler(setup);
+
+  await saveToFile(results);
 
   const dataTransform: { date: string; keyword: string; videos: IVideo[] }[] = [];
-  results.forEach((data) => {
-    const date = data.date.toISO();
-    const _data = { date, keyword: data.keyword, videos: data.videos };
-    dataTransform.push(_data);
+  results.forEach(({ date, keyword, videos }) => {
+    dataTransform.push({ date: date.toISO(), keyword, videos });
   });
 
   log.warn(blue('Result'));

@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
-import type { ICrawlerResult } from '../../crawler';
-import { IVideo } from '../../crawler';
+import type { ICrawlerResult } from '../../../crawler';
+import { IVideo } from '../../../crawler';
 
 interface IComposeContent {
   title: string;

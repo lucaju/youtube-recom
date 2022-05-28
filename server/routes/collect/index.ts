@@ -1,15 +1,15 @@
+import bodyparser from 'body-parser';
 import { celebrate, errors, Joi, Modes, Segments } from 'celebrate';
 import { Router } from 'express';
 import { magenta } from 'kleur';
 import log from 'loglevel';
 import type { ICrawlerConfig } from '../../../crawler';
-import Crawler from '../../../crawler';
+import { crawler } from '../../../crawler';
 import { launchPuppeteer } from '../../../crawler/browser';
 import { watchPage } from '../../../crawler/scraper';
 import { httpHeaders } from '../headers';
 import { auth } from '../middleware/auth';
 import * as validation from './validation';
-import bodyparser from 'body-parser';
 
 export const router = Router();
 router.use(httpHeaders);
@@ -47,14 +47,13 @@ router.get(
       #swagger.path = '/collect'
       #swagger.description = 'Endpoint for a single non recurrent collection'
     */
-   
+
     const config = req.query as unknown as ICrawlerConfig;
     if (typeof config.keywords === 'string') config.keywords = [config.keywords];
 
-    const crawler = new Crawler(config);
-    const data = await crawler.collect();
+    const results = await crawler(config);
 
-    res.status(200).send(data);
+    res.status(200).send(results);
   }
 );
 
@@ -76,7 +75,7 @@ router.get(
   errors(),
   auth('bearerJWT'),
   async (req, res) => {
-     /* #swagger.tags = ['Collect']
+    /* #swagger.tags = ['Collect']
        #swagger.description = 'Endpoint to scrape a single video'
     */
 

@@ -1,4 +1,5 @@
 export type SortType = 'top_rated' | 'view_count' | 'Sorting search results by relevance';
+import type { DateTime } from 'luxon';
 
 export interface IAdCompanion {
   domain?: string;
@@ -20,6 +21,12 @@ export interface ICrawlerConfig {
   language?: string;
 }
 
+export interface ICrawlerResult {
+  date: DateTime;
+  keyword: string;
+  videos: IVideo[];
+}
+
 export interface IRecommendedVideo {
   ytId: string;
 
@@ -29,7 +36,7 @@ export interface IRecommendedVideo {
 export interface IVideo {
   collectedAt: Date;
   depth: number;
-  recomendations: IRecommendedVideo[];
+  recommendations: IRecommendedVideo[];
   recommended: number;
   ytId: string;
 

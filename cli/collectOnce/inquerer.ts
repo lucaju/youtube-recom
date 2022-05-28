@@ -59,6 +59,13 @@ export const Inquerer = async () => {
       suffix: ` ${gray('[optional]')}`,
     },
     {
+      type: 'checkbox',
+      name: 'storage',
+      message: `Store results on`,
+      choices: [{ name: 'file', value: 'onFile' }],
+      default: ['onFile'],
+    },
+    {
       type: 'list',
       name: 'loglevel',
       message: `The log level`,

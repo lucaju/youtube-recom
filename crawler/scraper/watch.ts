@@ -19,14 +19,14 @@ export const watchPage = async ({ browser, branches, ytId, timezone }: IWatchPag
   const metadata = await getMetadata(page);
   if (!metadata) return;
 
-  const recomendations: IRecommendedVideo[] = await getRecommendations(page, branches);
+  const recommendations: IRecommendedVideo[] = await getRecommendations(page, branches);
 
   const collectedAt = DateTime.now().setZone(timezone).toBSON();
 
   const video: IVideo = {
     ytId,
     ...metadata,
-    recomendations,
+    recommendations,
     collectedAt,
     recommended: 1,
     depth: 0,

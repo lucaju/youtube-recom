@@ -1,5 +1,6 @@
 import { Express } from 'express';
 import http from 'http';
+import log from 'loglevel';
 import { Server } from 'socket.io';
 
 export let io: Server;
@@ -9,7 +10,7 @@ export const createIo = (app: Express) => {
   io = new Server(server);
 
   io.on('connection', (socket) => {
-    console.log('a user connected');
+    log.info('a user connected');
 
     io.emit('FIRE', {
       msg: 'some value',
@@ -17,7 +18,7 @@ export const createIo = (app: Express) => {
     });
 
     socket.on('disconnect', () => {
-      console.log('user disconnected');
+      log.info('user disconnected');
     });
   });
 

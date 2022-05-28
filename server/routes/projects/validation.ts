@@ -26,12 +26,17 @@ export const crawler = Joi.object().keys({
 });
 
 export const schedule = Joi.object().keys({
-  hour: Joi.number()
-    .required()
-    .ruleset.min(0)
-    .max(23)
-    .rule({ message: '{#label} must be between 0 and 23' })
-    .required(),
+  atTime: Joi.string()
+    .empty()
+    .when('frequency', {
+      is: Joi.string().valid('minute'),
+      then: Joi.string()
+        .pattern(/^(?:\d|[01]\d|2[0-3]):[0-5]\d$/)
+        .messages({
+          'string.pattern.base': `{#label}must be in 24h time format: 'HH:mm'. e.g., '20:30'`,
+        }),
+    }),
+  frequency: Joi.string().valid('minute', 'day').required(),
   timezone: Joi_.timezone().empty().messages({
     timezone: `{#label} must be a valid timezone name. e.g., 'America/Toronto'`,
   }),

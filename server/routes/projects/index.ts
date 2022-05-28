@@ -2,7 +2,6 @@ import { celebrate, errors, Joi, Modes, Segments } from 'celebrate';
 import { Router } from 'express';
 import log from 'loglevel';
 import { IProject } from '../../../db';
-import { ProjectModel } from '../../../db/models';
 import { httpHeaders } from '../headers';
 import { auth } from '../middleware/auth';
 import * as actions from './actions';
@@ -77,8 +76,9 @@ router.get(
   auth('bearerJWT'),
   async ({ currentUser, params }, res) => {
     const owner = currentUser.role !== 'admin' ? currentUser.id : null;
+    const active = currentUser.role !== 'admin' ? true : undefined;
 
-    const project = await actions.getProject({ id: params.id, owner });
+    const project = await actions.getProject({ id: params.id, owner, active });
 
     if (!project) {
       if (currentUser.role !== 'admin') return res.status(401).send();
@@ -99,39 +99,12 @@ router.get(
  * @returns {Object} res.body - Project
  */
 router.get('/', auth('bearerJWT'), async ({ currentUser }, res) => {
-  const projects = await actions.getProjects({ owner: currentUser.id });
+  const projects = await actions.getProjects({ owner: currentUser.id, active: true });
 
   const response = projects.map((project) => ({ ...project.toJSON({ versionKey: false }) }));
 
   res.status(200).json(response);
 });
-
-/**
- * GET Project by status for a User
- * Returns a single project
- *
- * @async
- * @function
- * @requires BearerAuthentication jwt
- * @param {String} req.params.status The project status (active/inactive).
- * @returns {Object} res.body - The project
- */
-router.get(
-  '/status/:status',
-  celebrate({
-    [Segments.PARAMS]: Joi.object().keys({ status: Joi.string().valid('active', 'inactive') }),
-  }),
-  errors(),
-  auth('bearerJWT'),
-  async ({ currentUser, params }, res) => {
-    const active = params.status !== 'active' ? false : true;
-    const projects = await actions.getProjects({ active, owner: currentUser.id });
-
-    const response = projects.map((project) => ({ ...project.toJSON({ versionKey: false }) }));
-
-    res.status(200).json(response);
-  }
-);
 
 /**
  * POST new project
@@ -232,37 +205,14 @@ router.put(
   auth('bearerJWT'),
   async ({ currentUser, body, params }, res) => {
     const owner = currentUser.role !== 'admin' ? currentUser.id : undefined;
+    if (!body) return res.status(400).send();
 
-    const sanitizedRequest = actions.sanitizeMongoConditions({ id: params.id, owner });
-    if (!sanitizedRequest)
-      return res.status(404).json({ msg: `Project ${params.id} does not exists` });
-
-    const project = await ProjectModel.findOne(sanitizedRequest);
+    const project = await actions.updateProject({ id: params.id, owner, project: body });
     if (!project) {
-      if (currentUser.role !== 'admin') return res.status(401).send();
+      if (owner !== 'admin') return res.status(401).send();
       return res.status(404).json({ msg: `Project ${params.id} does not exists` });
     }
-
-    // check valid operation
-    const updates = Object.keys(body);
-    const allowedUpdates = ['title', 'config'];
-    const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
-
-    const configUpdate = allowedUpdates.find((type) => type === 'config');
-
-    if (!isValidOperation) {
-      return res.status(400).json({ error: 'Invalid updates!' });
-    }
-
-    //@ts-ignore
-    updates.forEach((update) => (project[update] = body[update]));
-
-    await project.save();
-
-    if (configUpdate) {
-      await actions.stopJob({ id: params.id, dispose: true });
-      await actions.startJob({ id: params.id, owner: currentUser.id });
-    }
+    if ('error' in project) return res.status(401).json(project.error);
 
     res.status(200).json({ ...project.toJSON(), msg: 'Project updated' });
   }
@@ -293,8 +243,6 @@ router.patch(
       if (currentUser.role !== 'admin') return res.status(401).send();
       return res.status(404).json({ msg: `Project ${params.id} does not exists` });
     }
-
-    if ('error' in project) return res.status(400).json(project.error);
 
     log.warn(`Project ${project.id} started`);
 
@@ -364,10 +312,10 @@ router.patch(
     const dispose = query.dispose as unknown as boolean;
     await actions.stopAllJob({ dispose });
 
-    log.warn(`All Projects stopped`);
-    let msg = 'All Projects stopped.';
-    if (dispose) msg = `${msg}. Job pool reseted.`;
+    let msg = 'All Projects stopped';
+    if (dispose) msg = `${msg} and removed`;
 
+    log.warn(msg);
     res.status(202).json({ msg });
   }
 );
@@ -385,19 +333,19 @@ router.delete(
   '/:id',
   celebrate({
     [Segments.PARAMS]: Joi.object().keys({ id: validation.objectId.required() }).required(),
+    [Segments.QUERY]: Joi.object().keys({ dispose: Joi.boolean().empty() }),
   }),
   errors(),
   auth('bearerJWT'),
-  async ({ currentUser, params }, res) => {
+  async ({ currentUser, params, query }, res) => {
     const owner = currentUser.role !== 'admin' ? currentUser.id : undefined;
+    const dispose = query.dispose as unknown as boolean;
 
-    const projectId = await actions.deleteProject({ id: params.id, owner });
+    const projectId = await actions.deleteProject({ id: params.id, owner, dispose });
     if (!projectId) {
       if (currentUser.role !== 'admin') return res.status(401).send();
       return res.status(404).json({ msg: `Project ${params.id} does not exists` });
     }
-
-    log.warn(`Project ${projectId} Removed from pool`);
 
     res.status(202).json({ id: projectId, msg: `Project removed` });
   }
