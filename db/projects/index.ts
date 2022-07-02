@@ -50,11 +50,10 @@ ProjectSchema.methods.saveCollection = async function (results: ICrawlerResult[]
 
   for (const result of results) {
     const { keyword, date, videos } = result;
-
-    if (project.schedule.frequency === 'day') {
-      const isRecommendedToday = await RecommendationModel.collectedKeywordAt(project.id, date);
-      if (isRecommendedToday) return;
-    }
+    // if (project.schedule.frequency === 'day') {
+    //   const isRecommendedToday = await RecommendationModel.collectedKeywordAt(project.id, date);
+    //   if (isRecommendedToday) return;
+    // }
     await RecommendationModel.create({ project: project.id, date: date.toBSON(), keyword, videos });
   }
 };
