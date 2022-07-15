@@ -16,11 +16,12 @@ export const watchPage = async ({ browser, branches, ytId, timezone }: IWatchPag
 
   await page.goto(url);
 
-  const metadata = await getMetadata(page);
-  if (!metadata) return;
+  let metadata = await getMetadata(page);
+  if (!metadata) metadata = await getMetaFromHtml(page);
+  // if (metadata) return ;
 
   const stats = await getStats(page);
-  if (!stats) return;
+  // if (!videoStats) return;
 
   const recommendations: IRecommendedVideo[] = await getRecommendations(page, branches);
 
@@ -106,7 +107,53 @@ const getMetadata = async (page: Page) => {
 
     return videoDetails;
   } catch (error) {
-    console.log(`!! ERROR: ${error}`);
+    console.log(`!! ERROR: getMetadata: ${error}`);
+    return;
+  }
+};
+
+const getMetaFromHtml = async (page: Page) => {
+  try {
+    await page.waitForSelector('#above-the-fold');
+
+    const title = await page.$eval('div#title', (content) => content.innerHTML).catch(() => '');
+
+    const snipetContainer = await page.$('yt-formatted-string#formatted-snippet-text');
+    const uploadDate = await snipetContainer?.$eval(
+      'span:nth-child(2)',
+      (content) => content.innerHTML
+    );
+    const description = await snipetContainer?.$eval(
+      'span:nth-child(3)',
+      (content) => content.innerHTML
+    );
+
+    const chanelContainer = await page.$('ytd-channel-name#channel-name');
+    const channelName = await chanelContainer?.$eval(
+      ':nth-child(1)',
+      (content) => content.innerHTML
+    );
+    const channelId = await chanelContainer?.$eval('a', (content) => content.getAttribute('href'));
+
+    // * Results
+    const videoDetails: Partial<IVideo> = {
+      title,
+      description,
+      uploadDate: uploadDate
+        ? DateTime.fromFormat(uploadDate, 'LLL d, yyyy').toJSDate()
+        : undefined,
+      channel:
+        channelName && channelId
+          ? {
+              id: channelId,
+              name: channelName,
+            }
+          : undefined,
+    };
+
+    return videoDetails;
+  } catch (error) {
+    console.log(`!! ERROR: getMetaFromHtml: ${error}`);
     return;
   }
 };
@@ -173,7 +220,7 @@ const getStats = async (page: Page) => {
 
     return videoDetails;
   } catch (error) {
-    console.log(`!! ERROR: ${error}`);
+    console.log(`!! ERROR: getStats: ${error}`);
     return;
   }
 };
@@ -197,7 +244,7 @@ const getAdCompanion = async (page: Page) => {
 
     return adCompanion;
   } catch (error) {
-    console.log(`!! ERROR: ${error}`);
+    console.log(`!! ERROR: getAdCompanion: ${error}`);
     return;
   }
 };
