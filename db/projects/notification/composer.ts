@@ -42,7 +42,7 @@ const composeBody = ({ title, date, results }: IComposeContent) => {
   const body = `
   <div>
     <div>
-      <h1>YouTube Recomm</h1>
+      <h1>YouTube Recommendation Algorithm Project</h1>
       <h2>${title}</h2>
       <p>${date.toFormat('dd LLL yyyy - HH:mm')}</p>
     </div>

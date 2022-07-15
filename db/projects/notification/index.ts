@@ -34,7 +34,7 @@ export const sendEmail = async ({ body, recipient }: IParams) => {
   const info = await transporter.sendMail({
     from: `${auth.name} <${auth.email}>`,
     to: `${recipient.email}`,
-    subject: 'YouTube Recomm',
+    subject: 'YouTube Recommendation Algorithm Project',
     html: body,
   });
 
