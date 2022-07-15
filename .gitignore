@@ -8,3 +8,4 @@ python
 /mongodb
 /public
 .DS_Store
+.vscode
