@@ -108,6 +108,9 @@ const getMetadata = async (page: Page) => {
     return videoDetails;
   } catch (error) {
     console.log(`!! ERROR: getMetadata: ${error}`);
+    let body = await page.$eval('body', (content) => content.innerHTML)
+    if (!body) body = await page.$eval('html', (content) => content.innerHTML).catch(() => '');
+    console.log(body)
     return;
   }
 };
