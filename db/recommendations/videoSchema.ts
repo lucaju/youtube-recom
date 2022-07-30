@@ -9,7 +9,7 @@ type IVideoModel = Model<IVideo>;
 
 export const VideoSchema = new Schema<IVideo, IVideoModel>(
   {
-    ytId: { type: String, required: true },
+    ytId: String,
     collectedAt: { type: Date, required: true },
 
     depth: Number,
