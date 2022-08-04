@@ -253,9 +253,9 @@ const getAdCompanion = async (page: Page) => {
 };
 
 const getRecommendations = async (page: Page, branches?: number) => {
-  await page.waitForSelector('ytd-watch-next-secondary-results-renderer');
+  await page.waitForSelector('ytd-watch-next-secondary-results-renderer').catch(() => null);
 
-  const container = await page.$('ytd-watch-next-secondary-results-renderer');
+  const container = await page.$('ytd-watch-next-secondary-results-renderer').catch(() => null);
   if (!container) return [];
 
   // * Recommendation List
