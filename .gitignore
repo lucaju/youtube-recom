@@ -9,3 +9,4 @@ python
 /public
 .DS_Store
 .vscode
+*.code-workspace
