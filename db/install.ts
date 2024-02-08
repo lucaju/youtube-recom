@@ -18,7 +18,7 @@ export const install = async () => {
 
   await user.save().catch((error) => {
     throw new Error({
-      _message: 'Installation Failed. MongoDB faild to creae admin user',
+      _message: 'Installation Failed. MongoDB faild to create admin user',
       ...error,
     });
   });
