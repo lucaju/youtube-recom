@@ -222,7 +222,7 @@ export const deleteProject = async ({ dispose = false, id, owner }: IActionsPara
   if (dispose) {
     // remove completly
     await RecommendationModel.deleteMany({ project: project.id });
-    await project.remove();
+    // await project.remove(); //TODO: check why this is not working
     return project.id;
   }
 

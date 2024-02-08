@@ -182,7 +182,7 @@ router.delete(
     }
 
     currentUser = params.id === 'me' ? currentUser : await UserModel.findById(params.id);
-    await UserModel.findOneAndRemove({ _id: currentUser.id });
+    await UserModel.findOneAndDelete({ _id: currentUser.id });
     res.status(200).send(currentUser);
   }
 );
