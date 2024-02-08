@@ -27,8 +27,8 @@ const initSetup = async () => {
         loglevel === 'silent'
           ? log.levels.SILENT
           : loglevel === 'verbose'
-          ? log.levels.DEBUG
-          : log.levels.WARN,
+            ? log.levels.DEBUG
+            : log.levels.WARN,
     };
   }
 

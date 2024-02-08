@@ -1,6 +1,6 @@
 import kleur, { gray, magenta, red } from 'kleur';
 import log from 'loglevel';
-import emoji from 'node-emoji';
+import * as emoji from 'node-emoji'
 import ora, { Ora } from 'ora';
 import { Browser } from 'puppeteer';
 import { emitIo } from '../../server/socket';
