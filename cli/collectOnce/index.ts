@@ -64,7 +64,11 @@ const saveToFile = async function (results: ICrawlerResult[]) {
 
   const dataTransform: { date: string; keyword: string; videos: IVideo[] }[] = [];
   results.forEach(({ date, keyword, videos }) => {
-    dataTransform.push({ date: date.toISO(), keyword, videos });
+    dataTransform.push({
+      date: date.toISO() ?? '',
+      keyword,
+      videos,
+    });
   });
 
   log.warn(blue('Result'));
