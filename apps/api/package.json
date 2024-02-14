@@ -25,7 +25,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "celebrate": "^15.0.3",
-    "dotenv": "^16.4.1",
+    "dotenv": "^16.4.4",
     "env-cmd": "^10.1.0",
     "express": "^4.18.2",
     "fs-extra": "^11.2.0",
@@ -36,7 +36,7 @@
     "kleur": "^4.1.5",
     "loglevel": "^1.9.1",
     "luxon": "^3.4.4",
-    "mongoose": "^8.1.1",
+    "mongoose": "^8.1.2",
     "node-emoji": "^2.1.3",
     "nodemailer": "^6.9.9",
     "socket.io": "^4.7.4",
@@ -55,7 +55,7 @@
     "eslint-config-custom": "*",
     "swagger-autogen": "^2.23.7",
     "tsconfig": "*",
-    "tsup": "^8.0.1",
+    "tsup": "^8.0.2",
     "typescript": "^5.3.3"
   }
 }
