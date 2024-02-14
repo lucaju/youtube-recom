@@ -1,0 +1,44 @@
+{
+  "name": "youtube-recommendation-crawler",
+  "version": "0.3.0",
+  "keywords": [
+    "Youtube",
+    "Recommendation"
+  ],
+  "description": "Youtube Recommendation Scraper",
+  "author": "Luciano Frizzera <lucaju@gmail.com> (luciano.fluxo.art.br)",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "npm run build -- --watch",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "kleur": "^4.1.5",
+    "loglevel": "^1.9.1",
+    "luxon": "^3.4.4",
+    "node-emoji": "^2.1.3",
+    "ora": "5.4.1",
+    "puppeteer": "^22.0.0"
+  },
+  "devDependencies": {
+    "@types/luxon": "^3.4.2",
+    "@types/node": "^20.11.17",
+    "@types/node-emoji": "^2.1.0",
+    "@types/nodemailer": "^6.4.14",
+    "@types/yargs": "^17.0.32",
+    "eslint": "^8.56.0",
+    "eslint-config-custom": "*",
+    "tsconfig": "*",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
+  }
+}

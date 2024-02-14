@@ -1,6 +1,0 @@
-{
-  "watch": ["crawler","db","jobs","server"],
-  "ext": "ts,json",
-  "ignore": ["dist/*"],
-  "exec": "ts-node ./server/index.ts"
-}

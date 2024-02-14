@@ -1,0 +1,38 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "JWT_SECRET",
+    "DATABASE",
+    "MONGODB_URL",
+    "PORT",
+    "ADMIN_EMAIL",
+    "ADMIN_NAME",
+    "ADMIN_PWD",
+    "GMAIL_APP_SPECIFIC_PWD"
+  ],
+  "pipeline": {
+    "clean": {
+      "cache": false
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
+    "dev": {
+      "cache": false,
+      "dependsOn": ["^build"],
+      "persistent": true
+    },
+    "lint": {},
+    "test": {
+      "dependsOn": [],
+      "outputs": ["coverage/**"]
+    },
+    "deploy": {
+      "dependsOn": ["^build", "^test", "^lint"]
+    },
+    "start": {
+      "dependsOn": ["^build"]
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "extends": "tsconfig/base.json",
+  "include": ["**/*.ts"],
+  "compilerOptions": {
+    "allowJs": true,
+    "allowImportingTsExtensions": true,
+    "baseUrl": ".",
+    "lib": ["es2021"],
+    "module": "esnext",
+    "noEmit": true,
+    "paths": {
+      "@/*": ["./*"]
+    },
+    "resolveJsonModule": true,
+    "target": "ESNext"
+  }
+}

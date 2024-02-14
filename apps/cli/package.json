@@ -1,0 +1,43 @@
+{
+  "name": "yt-recommendation-scraper-cli",
+  "version": "0.3.0",
+  "keywords": [
+    "Youtube",
+    "Recommendation"
+  ],
+  "description": "Youtube Recommendation Scraper",
+  "author": "Luciano Frizzera <lucaju@gmail.com> (luciano.fluxo.art.br)",
+  "license": "MIT",
+  "main": "index.js",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsup src/collectOnce/index.ts src/collectOne/index.ts --format esm,cjs --dts",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "npm run build -- --watch",
+    "collect-once": "node dist/collectOnce/index.js",
+    "collect-one": "node dist/collectOne/index.js",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "fs-extra": "^11.2.0",
+    "inquirer": "8.2.6",
+    "kleur": "^4.1.5",
+    "loglevel": "^1.9.1",
+    "yargs": "^17.7.2",
+    "youtube-recommendation-crawler": "*"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/inquirer": "8.2.1",
+    "@types/node": "^20.11.17",
+    "@types/yargs": "^17.0.32",
+    "eslint": "^8.56.0",
+    "eslint-config-custom": "*",
+    "tsconfig": "*",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
+  }
+}

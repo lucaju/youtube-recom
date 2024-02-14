@@ -1,0 +1,18 @@
+{
+  "extends": ["//"],
+  "globalEnv": [
+    "JWT_SECRET",
+    "DATABASE",
+    "MONGODB_URL",
+    "PORT",
+    "ADMIN_EMAIL",
+    "ADMIN_NAME",
+    "ADMIN_PWD",
+    "GMAIL_APP_SPECIFIC_PWD"
+  ],
+  "pipeline": {
+    "build": {
+      "outputs": ["dist/**"]
+    }
+  }
+}
