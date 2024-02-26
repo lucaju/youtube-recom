@@ -3,8 +3,7 @@ import log from 'loglevel';
 import * as emoji from 'node-emoji';
 import ora, { Ora } from 'ora';
 import { Browser } from 'puppeteer';
-// import { emitIo } from '../../server/socket';
-import type { IRecommendedVideo, IVideo } from '../types';
+import type { RecommendedVideo, Video } from '../types';
 import { searchPage } from './search';
 import { watchPage } from './watch';
 
@@ -30,10 +29,9 @@ class Scraper {
   private readonly language?: string;
   private readonly maxDepth: number = 1;
   private readonly spinner: Ora;
-  private readonly timezone?: string;
 
-  recommendedVideos: IRecommendedVideo[];
-  videos: IVideo[];
+  recommendedVideos: RecommendedVideo[];
+  videos: Video[];
 
   constructor(params: IScraperParams) {
     const { browser, keyword, seeds, branches, depth, country, language } = params;
@@ -90,7 +88,7 @@ class Scraper {
   }
 
   //* Recursive function
-  private async getRecommendationsFor(video: IVideo | IRecommendedVideo, depth = 0) {
+  private async getRecommendationsFor(video: Video | RecommendedVideo, depth = 0) {
     const { ytId, title } = video;
     if (depth > this.maxDepth) return [video];
 
@@ -147,7 +145,7 @@ class Scraper {
     this.videos.push(videoInfo);
 
     // drill down on each branch
-    let allRecommendations: (IRecommendedVideo | IVideo)[] = [];
+    let allRecommendations: (RecommendedVideo | Video)[] = [];
     const currentVideoRecoms = videoInfo.recommendations?.slice(0, this.branches) ?? [];
 
     for (const recom of currentVideoRecoms) {
@@ -159,7 +157,7 @@ class Scraper {
   }
 
   private getVideo = (id: string) => {
-    const video = this.videos.find((video: IVideo) => video.ytId === id);
+    const video = this.videos.find((video: Video) => video.ytId === id);
     return video;
   };
 }

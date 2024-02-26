@@ -3,7 +3,7 @@ import log from 'loglevel';
 import { DateTime } from 'luxon';
 import { launchPuppeteer } from './browser';
 import Scraper from './scraper';
-import type { ICrawlerConfig, ICrawlerResult } from './types';
+import type { CrawlerConfig, CrawlerResult } from './types';
 
 export { launchPuppeteer } from './browser';
 export { watchPage } from './scraper';
@@ -66,7 +66,7 @@ export const crawler = async (config: ICrawlerConfig) => {
   log.info(kleur.white('Keywords:'));
   log.info(kleur.blue(keywords.join(' | ')));
 
-  const data: ICrawlerResult[] = [];
+  const data: CrawlerResult[] = [];
 
   // * Each Keyword
   for (const keyword of keywords) {
@@ -79,7 +79,11 @@ export const crawler = async (config: ICrawlerConfig) => {
       console.table(scraper.videos, ['recommended', 'depth', 'title', 'views', 'likes']);
     }
 
-    data.push({ date: startTime, keyword, videos: scraper.videos });
+    data.push({
+      date: startTime,
+      keyword,
+      videos: scraper.videos,
+    });
   }
 
   //done

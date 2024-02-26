@@ -1,15 +1,15 @@
 import type { IAdCompanion, IRecommendedVideo, IVideo } from '../types';
 import { DateTime } from 'luxon';
 import { Browser, ElementHandle, Page } from 'puppeteer';
+import type { AdCompanion, RecommendedVideo, Video } from '../types';
 
-interface IWatchPageParams {
+interface Props {
   browser: Browser;
   branches?: number;
-  timezone?: string;
   ytId: string;
 }
 
-export const watchPage = async ({ browser, branches, ytId, timezone }: IWatchPageParams) => {
+export const watchPage = async ({ browser, branches, ytId }: Props) => {
   const url = `https://www.youtube.com/watch?v=${ytId}`;
 
   const page = await browser.newPage();
@@ -23,11 +23,11 @@ export const watchPage = async ({ browser, branches, ytId, timezone }: IWatchPag
   const stats = await getStats(page);
   // if (!videoStats) return;
 
-  const recommendations: IRecommendedVideo[] = await getRecommendations(page, branches);
+  const recommendations: RecommendedVideo[] = await getRecommendations(page, branches);
 
   const collectedAt = DateTime.now().setZone(timezone).toBSON();
 
-  const video: IVideo = {
+  const video: Video = {
     ytId,
     ...metadata,
     ...stats,
@@ -96,7 +96,7 @@ const getMetadata = async (page: Page) => {
     const channelName = channelMeta.name ?? '';
 
     // * Results
-    const videoDetails: Partial<IVideo> = {
+    const videoDetails: Partial<Video> = {
       title,
       description,
       duration,
@@ -144,7 +144,7 @@ const getMetaFromHtml = async (page: Page) => {
     const channelId = await chanelContainer?.$eval('a', (content) => content.getAttribute('href'));
 
     // * Results
-    const videoDetails: Partial<IVideo> = {
+    const videoDetails: Partial<Video> = {
       title,
       description,
       uploadDate: uploadDate
@@ -216,7 +216,7 @@ const getStats = async (page: Page) => {
     const adCompanion = await getAdCompanion(page);
 
     // * Results
-    const videoDetails: Partial<IVideo> = {
+    const videoDetails: Partial<Video> = {
       hastags,
       views,
       likes,
@@ -247,7 +247,7 @@ const getAdCompanion = async (page: Page) => {
 
     if (!title && !domain) return;
 
-    const adCompanion: IAdCompanion = { title, domain };
+    const adCompanion: AdCompanion = { title, domain };
 
     return adCompanion;
   } catch (error) {
@@ -267,7 +267,7 @@ const getRecommendations = async (page: Page, branches?: number) => {
   const items = await page.$$('ytd-compact-video-renderer');
 
   // * Details
-  const recommendations: IRecommendedVideo[] = [];
+  const recommendations: RecommendedVideo[] = [];
 
   for (const item of items.splice(0, branches ?? 1)) {
     const videoRecomended = await getRecommendedVideoDetails(item);
@@ -296,7 +296,7 @@ const getRecommendedVideoDetails = async (item: ElementHandle<Element>) => {
   }
 
   // * Results
-  const recommendedVideo: IRecommendedVideo = { ytId };
+  const recommendedVideo: RecommendedVideo = { ytId };
   if (title) recommendedVideo.title = title;
 
   return recommendedVideo;

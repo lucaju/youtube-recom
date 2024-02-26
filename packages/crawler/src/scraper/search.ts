@@ -1,17 +1,17 @@
 import kleur from 'kleur';
 import log from 'loglevel';
-import { Browser, ElementHandle } from 'puppeteer';
-import type { IRecommendedVideo, SortType } from '../types';
+import type { Browser, ElementHandle } from 'puppeteer';
+import type { RecommendedVideo, SortType } from '../types';
 
-interface IParams {
+interface Props {
+  country?: string;
   browser: Browser;
   keyword: string;
-  seeds: number;
-  country?: string;
   language?: string;
+  seeds: number;
 }
 
-export const searchPage = async ({ browser, keyword, seeds, country, language }: IParams) => {
+export const searchPage = async ({ browser, keyword, seeds, country, language }: Props) => {
   const maxSeeds = seeds <= 10 ? seeds : 10;
 
   const page = await browser.newPage();
@@ -43,7 +43,7 @@ export const searchPage = async ({ browser, keyword, seeds, country, language }:
 
   const items = results.slice(0, maxSeeds);
 
-  const videos: IRecommendedVideo[] = [];
+  const videos: RecommendedVideo[] = [];
 
   for (const item of items) {
     const video = await getDetails(item);
@@ -68,7 +68,7 @@ const getDetails = async (item: ElementHandle<Element>) => {
 
   const title = await item.$eval('h3 > a > yt-formatted-string', (content) => content.innerHTML);
 
-  const video: IRecommendedVideo = { ytId, title };
+  const video: RecommendedVideo = { ytId, title };
 
   return video;
 };
