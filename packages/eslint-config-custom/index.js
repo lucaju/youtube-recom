@@ -18,10 +18,10 @@ module.exports = {
       extends: [
         'eslint:recommended',
         //* For more relaxed TS rules, uncommend next 2 lines and comment the following 2.
-        // 'plugin:@typescript-eslint/recommended',
-        // 'plugin:@typescript-eslint/stylistic',
-        'plugin:@typescript-eslint/recommended-type-checked',
-        'plugin:@typescript-eslint/stylistic-type-checked',
+        'plugin:@typescript-eslint/recommended',
+        'plugin:@typescript-eslint/stylistic',
+        // 'plugin:@typescript-eslint/recommended-type-checked',
+        // 'plugin:@typescript-eslint/stylistic-type-checked',
         'prettier',
       ],
       parser: '@typescript-eslint/parser',
@@ -32,6 +32,7 @@ module.exports = {
       },
       plugins: ['@typescript-eslint', 'prettier'],
       rules: {
+        // '@typescript-eslint/no-unsafe-member-access': 1,
         '@typescript-eslint/ban-ts-comment': 1,
         '@typescript-eslint/no-explicit-any': 1,
         '@typescript-eslint/require-await': 0,
