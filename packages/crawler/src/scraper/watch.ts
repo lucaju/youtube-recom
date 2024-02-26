@@ -1,5 +1,3 @@
-import type { IAdCompanion, IRecommendedVideo, IVideo } from '../types';
-import { DateTime } from 'luxon';
 import { Browser, ElementHandle, Page } from 'puppeteer';
 import type { AdCompanion, RecommendedVideo, Video } from '../types';
 
@@ -25,7 +23,7 @@ export const watchPage = async ({ browser, branches, ytId }: Props) => {
 
   const recommendations: RecommendedVideo[] = await getRecommendations(page, branches);
 
-  const collectedAt = DateTime.now().setZone(timezone).toBSON();
+  const collectedAt = new Date();
 
   const video: Video = {
     ytId,
@@ -147,9 +145,7 @@ const getMetaFromHtml = async (page: Page) => {
     const videoDetails: Partial<Video> = {
       title,
       description,
-      uploadDate: uploadDate
-        ? DateTime.fromFormat(uploadDate, 'LLL d, yyyy').toJSDate()
-        : undefined,
+      uploadDate: uploadDate ? new Date() : undefined,
       channel:
         channelName && channelId
           ? {

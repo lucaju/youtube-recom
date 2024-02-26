@@ -1,6 +1,6 @@
+import { formatDuration, intervalToDuration } from 'date-fns';
 import kleur from 'kleur';
 import log from 'loglevel';
-import { DateTime } from 'luxon';
 import { launchPuppeteer } from './browser';
 import Scraper from './scraper';
 import type { CrawlerConfig, CrawlerResult } from './types';
@@ -19,10 +19,10 @@ export const MAX_VALUES = {
 export const crawler = async (config: CrawlerConfig) => {
   const { keywords, seeds, branches, depth, country, language } = config;
 
-  const startTime = DateTime.now().setZone();
+  const startTime = new Date();
   const browser = await launchPuppeteer();
 
-  const startDate = DateTime.now();
+  const startDate = new Date();
   log.info(
     kleur.magenta(`Scraping Youtube Recommendations: ${kleur.dim(`${startDate.toString()}`)}\n`),
   );
@@ -53,11 +53,11 @@ export const crawler = async (config: CrawlerConfig) => {
   //done
   await browser.close();
 
-  const endDate = DateTime.now();
-  const duration = endDate.diff(startDate, ['hours', 'minutes', 'seconds']);
+  const endDate = new Date();
+  const duration = intervalToDuration({ start: startDate, end: endDate });
 
   log.info(kleur.magenta(`\nDone at ${kleur.dim(`${endDate.toString()}`)}`));
-  log.info(kleur.green(`(${duration.toHuman({ unitDisplay: 'short' })})`));
+  log.info(kleur.green(`(${formatDuration(duration)})`));
   log.info('\n');
 
   return data;

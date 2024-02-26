@@ -120,7 +120,6 @@ class Scraper {
     videoInfo = await watchPage({
       browser: this.browser,
       branches: this.branches,
-      timezone: this.timezone,
       ytId: video.ytId,
     });
 
