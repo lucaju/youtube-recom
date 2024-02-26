@@ -69,7 +69,6 @@ const getMetadata = async (page: Page) => {
     const title = metas.name;
     const description = metas.description;
     const paid = metas.paid === 'True' ? true : false;
-    const channelId = metas.channelId;
     const duration = metas.duration;
     const uploadDate = metas.uploadDate;
     const datePublished = metas.datePublished;
@@ -79,9 +78,9 @@ const getMetadata = async (page: Page) => {
       (content) => {
         const metaObject = {};
 
-        content.forEach((meta) => {
-          const key = meta.getAttribute('itemprop');
-          const value = meta.getAttribute('content') ?? meta.getAttribute('href');
+        content.forEach((link) => {
+          const key = link.getAttribute('itemprop');
+          const value = link.getAttribute('content') ?? link.getAttribute('href');
           if (!key || !value) return;
 
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -92,6 +91,8 @@ const getMetadata = async (page: Page) => {
         return metaObject;
       },
     );
+
+    const channelId = channelMeta.url.split('/')[2];
     const channelName = channelMeta.name ?? '';
 
     // * Results
