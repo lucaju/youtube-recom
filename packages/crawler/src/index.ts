@@ -16,43 +16,7 @@ export const MAX_VALUES = {
   depth: 5,
 };
 
-export const parseCrawlerValues = (values: ICrawlerConfig) => {
-  if (values.keywords.length === 0) {
-    log.warn('At least one keyword must be defined');
-    return false;
-  }
-
-  if (values.keywords.length > MAX_VALUES.keywords) {
-    log.warn(`Limited to ${MAX_VALUES.keywords} keywords`);
-    values.keywords = values.keywords.slice(0, MAX_VALUES.keywords);
-  }
-
-  values.keywords = values.keywords.filter((keyword: unknown, index: number) => {
-    if (typeof keyword !== 'string') {
-      log.warn(`A keyword must be a string. Keyword [${index}] is ${typeof keyword}`);
-    }
-    return typeof keyword === 'string';
-  });
-
-  if (values.seeds > MAX_VALUES.seeds) {
-    log.warn(`Limited to ${MAX_VALUES.seeds} seeds`);
-    values.seeds = MAX_VALUES.seeds;
-  }
-
-  if (values.branches > MAX_VALUES.branches) {
-    log.warn(`Limited to ${MAX_VALUES.branches} branches`);
-    values.branches = MAX_VALUES.branches;
-  }
-
-  if (values.depth > MAX_VALUES.depth) {
-    log.warn(`Limited to depth ${MAX_VALUES.depth}`);
-    values.depth = MAX_VALUES.branches;
-  }
-
-  return values;
-};
-
-export const crawler = async (config: ICrawlerConfig) => {
+export const crawler = async (config: CrawlerConfig) => {
   const { keywords, seeds, branches, depth, country, language } = config;
 
   const startTime = DateTime.now().setZone();
