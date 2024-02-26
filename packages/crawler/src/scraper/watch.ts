@@ -189,14 +189,11 @@ const getStats = async (page: Page) => {
       content.map((n) => n.innerHTML),
     );
 
-    const interactButtons = await container.$$('div > ytd-toggle-button-renderer');
-    // first button: Like
-    // second button: dislike
+    const interactButtons = await container.$$('button');
 
     // * Likes Exact
-    //aria-label contains the exact number.
-    const likesExactCount = await interactButtons?.[0]?.$eval('yt-formatted-string', (content) =>
-      content.getAttribute('aria-label'),
+    const likesExactCount = await interactButtons[0].evaluate((elem) =>
+      elem.getAttribute('aria-label'),
     );
     const likes = likesExactCount ? cleanCount(likesExactCount) : -1;
 
