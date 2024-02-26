@@ -107,9 +107,6 @@ class Scraper {
       const bumpRecom = emoji.get('cookie');
 
       log.info(`${kleur.gray(`${depthSignSeen} ${bumpRecom} ${ytId} |`)} ${title}`);
-      // emitIo('crawlerEvent', {
-      //   msg: `${depthSignSeen} ${bumpRecom} ${ytId} | ${title}`,
-      // });
 
       return videoInfo.recommendations?.slice(0, this.branches) ?? [];
     }
@@ -129,16 +126,10 @@ class Scraper {
       log.info(
         `${kleur.gray(`${depthSign} | ${ytId} |`)} ${emoji.get('x')} ${kleur.red(`${title}`)}`,
       );
-      // emitIo('crawlerEvent', {
-      //   msg: `${depthSign} | ${ytId} | ${emoji.get('x')} ${title}`,
-      // });
       return [];
     }
 
     log.info(`${kleur.gray(`${depthSign} | ${ytId} |`)} ${title}`);
-    // emitIo('crawlerEvent', {
-    //   msg: `${depthSign} | ${ytId} | ${title}`,
-    // });
 
     videoInfo.depth = depth;
     this.videos.push(videoInfo);
