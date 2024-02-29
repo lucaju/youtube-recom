@@ -26,12 +26,12 @@
     "kleur": "^4.1.5",
     "loglevel": "^1.9.1",
     "node-emoji": "^2.1.3",
-    "ora": "5.4.1",
-    "puppeteer": "^22.2.0",
+    "ora": "7.0.1",
+    "puppeteer": "^22.3.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@types/node": "^20.11.20",
+    "@types/node": "^20.11.24",
     "eslint": "^8.57.0",
     "eslint-config-custom": "*",
     "tsconfig": "*",
