@@ -11,7 +11,7 @@ import {
 import { argv } from './argv';
 import { Inquerer } from './inquerer';
 
-const configFile = 'config_collect_once.json';
+const configFile = 'config.json';
 
 const initSetup = async () => {
   let config: ICrawlerConfig;

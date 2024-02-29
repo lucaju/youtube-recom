@@ -1,0 +1,13 @@
+{
+  "keywords": ["REM"],
+  "seeds": 1,
+  "branches": 1,
+  "depth": 1,
+  "country": "",
+  "language": "",
+  "saveOnFile": true,
+  "delay": {
+    "video": 3,
+    "seed": 2
+  }
+}
