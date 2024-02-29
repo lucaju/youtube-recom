@@ -1,6 +1,6 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import pkg from '../../package.json';
+import pkg from '../../package.json' with { type: 'json' };
 
 export const argv = yargs(hideBin(process.argv))
   .usage('Youtube Recommendation Scraper\n\nUsage: $0 [options]')
@@ -28,6 +28,16 @@ export const argv = yargs(hideBin(process.argv))
       number: true,
       description: 'Define the depth to explore',
       default: 2,
+    },
+    delayVideo: {
+      number: true,
+      description: 'Delay scraper for each video in seconds',
+      default: 0,
+    },
+    delaySeed: {
+      number: true,
+      description: 'Delay scraper for each seed video in seconds',
+      default: 0,
     },
     country: {
       string: true,

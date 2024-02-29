@@ -1,5 +1,6 @@
-import inquirer from 'inquirer';
+import { input, select } from '@inquirer/prompts';
 import kleur from 'kleur';
+import type { LocalLogLevel } from '../util';
 
 export interface InquererProps {
   id: string;
@@ -7,21 +8,21 @@ export interface InquererProps {
 }
 
 export const Inquerer = async () => {
-  const result = await inquirer.prompt<InquererProps>([
-    {
-      type: 'input',
-      name: 'id',
+  const result = {
+    id: await input({
       message: `YouTube Video ID: ${kleur.gray('(e.g., udSi-A98L-g)')}\n`,
-      validate: (input) => input !== '',
-    },
-    {
-      type: 'list',
-      name: 'loglevel',
+      validate: (input: string) => input !== '',
+    }),
+    loglevel: await select<LocalLogLevel>({
       message: `The log level`,
-      choices: ['verbose', 'results', 'silent'],
-      default: 1,
-    },
-  ]);
+      choices: [
+        { name: 'verbose', value: 'verbose' },
+        { name: 'result', value: 'result' },
+        { name: 'silent', value: 'silent' },
+      ],
+      default: 'results',
+    }),
+  };
 
   return result;
 };

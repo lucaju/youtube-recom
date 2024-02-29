@@ -1,21 +1,22 @@
 import kleur from 'kleur';
 import log from 'loglevel';
-import { launchPuppeteer, watchPage } from 'youtube-recommendation-crawler';
+import { scrapeVideo } from 'youtube-recommendation-crawler';
+import { getLogLevelDesc } from '../util';
 import { argv } from './argv';
 import { Inquerer } from './inquerer';
 
-let loglevel: log.LogLevelDesc = 'INFO';
-let videoId: string;
-
 const initSetup = async () => {
+  let loglevel: log.LogLevelDesc = log.levels.INFO;
+  let videoId: string;
+
   if (argv.id) {
     const { id, silent = false, verbose = false } = argv;
     videoId = id;
-    loglevel = silent ? 'SILENT' : verbose ? 'DEBUG' : 'INFO';
+    loglevel = silent ? log.levels.SILENT : verbose ? log.levels.DEBUG : log.levels.INFO;
   } else {
-    const { id, loglevel: _loglevel } = await Inquerer();
-    videoId = id;
-    loglevel = _loglevel === 'silent' ? 'SILENT' : _loglevel === 'verbose' ? 'DEBUG' : 'INFO';
+    const response = await Inquerer();
+    videoId = response.id;
+    if (response.loglevel) loglevel = getLogLevelDesc(response.loglevel);
   }
 
   log.setLevel(loglevel);
@@ -25,14 +26,7 @@ const initSetup = async () => {
 
 void (async () => {
   const videoId = await initSetup();
-  log.info(kleur.magenta(`Scraping Youtube Recommendations: ${videoId}\n`));
-
-  const browser = await launchPuppeteer();
-  const data = await watchPage({ browser, ytId: videoId });
-  await browser.close();
-
-  log.info(kleur.blue('Result'));
-  log.warn(data);
-
-  log.info(kleur.magenta('\nDone'));
+  log.info(kleur.magenta(`Scraping Youtube Video: ${videoId}\n`));
+  const data = await scrapeVideo(videoId);
+  log.info(data);
 })();

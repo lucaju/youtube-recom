@@ -1,59 +1,55 @@
 import fs from 'fs-extra';
-import kleur from 'kleur';
 import log from 'loglevel';
-import {
-  crawler,
-  parseCrawlerValues,
-  type ICrawlerConfig,
-  type ICrawlerResult,
-  type IVideo,
-} from 'youtube-recommendation-crawler';
+import { Crawler, type CrawlerConfig, type CrawlerResult } from 'youtube-recommendation-crawler';
+import { getLogLevelDesc } from '../util';
 import { argv } from './argv';
 import { Inquerer } from './inquerer';
+import { parseConfig } from './util';
+
+export interface Config extends CrawlerConfig {
+  keywords: string[];
+  logLevel?: 'silent' | 'verbose' | 'result';
+}
 
 const configFile = 'config.json';
 
 const initSetup = async () => {
-  let config: ICrawlerConfig;
-  let loglevel: log.LogLevelDesc = 'INFO';
+  let config: Config;
+  let loglevel: log.LogLevelDesc = log.levels.INFO;
 
   if (argv.keywords) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { _, ['$0']: removedProperty, ...args } = argv;
-    const { silent, verbose, ...agsconfig } = args;
-    console.log(agsconfig);
-    config = agsconfig as ICrawlerConfig;
-    loglevel = silent ? 'SILENT' : verbose ? 'INFO' : 'WARN';
+    const { silent, verbose, ...argsconfig } = argv;
+    loglevel = silent ? log.levels.SILENT : verbose ? log.levels.DEBUG : log.levels.INFO;
+    config = {
+      keywords: argv.keywords,
+      seeds: argsconfig.seeds,
+      branches: argsconfig.branches,
+      depth: argsconfig.depth,
+      delay: {
+        video: argsconfig.delayVideo,
+        seed: argsconfig.delaySeed,
+      },
+      country: argsconfig.country,
+      language: argsconfig.language,
+    };
   } else {
-    const configFromFile = (await fs
-      .readJson(configFile)
-      .catch(() => null)) as ICrawlerConfig | null;
-    if (configFromFile) {
-      config = configFromFile;
-    } else {
-      const { loglevel: _loglevel, ...args } = await Inquerer();
-      config = { ...args, keywords: args.keywords.split(',') };
-      loglevel = _loglevel === 'silent' ? 'SILENT' : _loglevel === 'results' ? 'WARN' : 'INFO';
-    }
+    const configFromFile = await fs.readJson(configFile).catch(() => null);
+    config = configFromFile ?? (await Inquerer());
   }
 
+  if (config.logLevel) loglevel = getLogLevelDesc(config.logLevel);
   log.setLevel(loglevel);
 
   return config;
 };
 
-const saveToFile = async function (results: ICrawlerResult[]) {
+const saveToFile = async (results: CrawlerResult[]) => {
   const keywords = results.map(({ keyword }) => keyword);
-  const data = results.map(({ keyword, date, videos }) => ({
-    keyword,
-    date: date.toISO(),
-    videos,
-  }));
 
   const result = {
     date: new Date(),
     keywords,
-    results: data,
+    results,
   };
 
   const folder = 'results';
@@ -64,22 +60,22 @@ const saveToFile = async function (results: ICrawlerResult[]) {
 //Initial Setup
 void (async () => {
   const config = await initSetup();
-  const setup = parseCrawlerValues(config);
+  const setup = parseConfig(config);
   if (!setup) return;
 
+  const results: CrawlerResult[] = [];
+  const crawler = new Crawler(setup);
   const results = await crawler(setup);
+
+  for (const keyword of config.keywords) {
+    const data = await crawler.collect(keyword);
+    if (!data) continue;
+    results.push(data);
+  }
+
+  await crawler.dispose();
 
   await saveToFile(results);
 
-  const dataTransform: { date: string; keyword: string; videos: IVideo[] }[] = [];
-  results.forEach(({ date, keyword, videos }) => {
-    dataTransform.push({
-      date: date.toISO() ?? '',
-      keyword,
-      videos,
-    });
-  });
-
-  log.warn(kleur.blue('Result'));
-  log.warn(dataTransform);
+  log.info(results);
 })();
