@@ -1,18 +1,26 @@
 import kleur from 'kleur';
 import log from 'loglevel';
 import type { Browser, ElementHandle } from 'puppeteer';
-import type { RecommendedVideo, SortType } from '../types';
+import { getBrowser } from '../components';
+import { config } from '../config';
+import type { CrawlerConfig, VideoBase } from '../types';
 
-interface Props {
-  country?: string;
-  browser: Browser;
+type SortType = 'top_rated' | 'view_count' | 'Sorting search results by relevance';
+
+interface Props extends Pick<CrawlerConfig, 'country' | 'language' | 'seeds'> {
+  browser?: Browser;
   keyword: string;
-  language?: string;
-  seeds: number;
 }
 
-export const searchPage = async ({ browser, keyword, seeds, country, language }: Props) => {
-  const maxSeeds = seeds <= 10 ? seeds : 10;
+export const searchPage = async ({
+  browser,
+  country,
+  keyword,
+  language,
+  seeds = config.seeds.default,
+}: Props) => {
+  if (!browser) browser = await getBrowser();
+  const maxSeeds = seeds;
 
   const page = await browser.newPage();
 
@@ -43,7 +51,7 @@ export const searchPage = async ({ browser, keyword, seeds, country, language }:
 
   const items = results.slice(0, maxSeeds);
 
-  const videos: RecommendedVideo[] = [];
+  const videos: VideoBase[] = [];
 
   for (const item of items) {
     const video = await getDetails(item);
@@ -64,11 +72,11 @@ const getDetails = async (item: ElementHandle<Element>) => {
   const link = await item.$eval('h3 > a', (content) => content.getAttribute('href'));
   if (!link) return null;
 
-  const ytId = link.toString().split('=')[1];
+  const id = link.toString().split('=')[1];
 
   const title = await item.$eval('h3 > a > yt-formatted-string', (content) => content.innerHTML);
 
-  const video: RecommendedVideo = { ytId, title };
+  const video: VideoBase = { id, title };
 
   return video;
 };

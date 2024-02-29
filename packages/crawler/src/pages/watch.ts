@@ -1,38 +1,29 @@
-import { Browser, ElementHandle, Page } from 'puppeteer';
-import type { AdCompanion, RecommendedVideo, Video } from '../types';
+import log from 'loglevel';
+import { ElementHandle, Page } from 'puppeteer';
+import { getBrowser } from '../components';
+import { config } from '../config';
+import type { AdCompanion, Video, VideoBase } from '../types';
 
-interface Props {
-  browser: Browser;
-  branches?: number;
-  ytId: string;
-}
+export const watchPage = async (id: string) => {
+  const browser = await getBrowser();
 
-export const watchPage = async ({ browser, branches, ytId }: Props) => {
-  const url = `https://www.youtube.com/watch?v=${ytId}`;
+  const url = `https://www.youtube.com/watch?v=${id}`;
 
   const page = await browser.newPage();
-
   await page.goto(url);
 
   let metadata = await getMetadata(page);
   if (!metadata) metadata = await getMetaFromHtml(page);
-  // if (metadata) return ;
 
   const stats = await getStats(page);
-  // if (!videoStats) return;
 
-  const recommendations: RecommendedVideo[] = await getRecommendations(page, branches);
-
-  const collectedAt = new Date();
+  const recommendations: VideoBase[] = await getRecommendations(page);
 
   const video: Video = {
-    ytId,
+    id: id,
     ...metadata,
     ...stats,
     recommendations,
-    collectedAt,
-    recommended: 1,
-    depth: 0,
   };
 
   await page.close();
@@ -110,10 +101,10 @@ const getMetadata = async (page: Page) => {
     return videoDetails;
   } catch (error) {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    console.log(`!! ERROR: getMetadata: ${error}`);
+    log.error(`!! ERROR: getMetadata: ${error}`);
     let body = await page.$eval('body', (content) => content.innerHTML);
     if (!body) body = await page.$eval('html', (content) => content.innerHTML).catch(() => '');
-    console.log(body);
+    log.warn(body);
     return;
   }
 };
@@ -158,7 +149,7 @@ const getMetaFromHtml = async (page: Page) => {
     return videoDetails;
   } catch (error) {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    console.log(`!! ERROR: getMetaFromHtml: ${error}`);
+    log.error(`!! ERROR: getMetaFromHtml: ${error}`);
     return;
   }
 };
@@ -223,7 +214,7 @@ const getStats = async (page: Page) => {
     return videoDetails;
   } catch (error) {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    console.log(`!! ERROR: getStats: ${error}`);
+    log.error(`!! ERROR: getStats: ${error}`);
     return;
   }
 };
@@ -248,12 +239,12 @@ const getAdCompanion = async (page: Page) => {
     return adCompanion;
   } catch (error) {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    console.log(`!! ERROR: getAdCompanion: ${error}`);
+    log.error(`!! ERROR: getAdCompanion: ${error}`);
     return;
   }
 };
 
-const getRecommendations = async (page: Page, branches?: number) => {
+const getRecommendations = async (page: Page) => {
   await page.waitForSelector('ytd-watch-next-secondary-results-renderer').catch(() => null);
 
   const container = await page.$('ytd-watch-next-secondary-results-renderer').catch(() => null);
@@ -263,9 +254,9 @@ const getRecommendations = async (page: Page, branches?: number) => {
   const items = await page.$$('ytd-compact-video-renderer');
 
   // * Details
-  const recommendations: RecommendedVideo[] = [];
+  const recommendations: VideoBase[] = [];
 
-  for (const item of items.splice(0, branches ?? 1)) {
+  for (const item of items.splice(0, config.branches.max)) {
     const videoRecomended = await getRecommendedVideoDetails(item);
     if (videoRecomended) recommendations.push(videoRecomended);
   }
@@ -280,7 +271,7 @@ const getRecommendedVideoDetails = async (item: ElementHandle<Element>) => {
   if (!link) return;
 
   // * ID
-  const ytId = link.toString().split('=')[1];
+  const id = link.toString().split('=')[1];
 
   // * Title
   let title: string | undefined;
@@ -292,7 +283,7 @@ const getRecommendedVideoDetails = async (item: ElementHandle<Element>) => {
   }
 
   // * Results
-  const recommendedVideo: RecommendedVideo = { ytId };
+  const recommendedVideo: VideoBase = { id: id };
   if (title) recommendedVideo.title = title;
 
   return recommendedVideo;
