@@ -14,7 +14,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "build": "tsup src/collectOnce/index.ts src/collectOne/index.ts --format esm,cjs --dts",
+    "build": "npm run clean && tsup src/collectOnce/index.ts src/collectOne/index.ts --format esm,cjs --dts",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "npm run build -- --watch",
     "collect-once": "node dist/collectOnce/index.js",
