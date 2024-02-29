@@ -22,6 +22,8 @@ COPY ./package.json .
 # Puppeteer v13.5.0 works with Chromium 100.
 # RUN npm i puppeteer@14.1.1
 
+RUN npm i tsup -g
+
 RUN npm install
 
 COPY . .
@@ -34,6 +36,8 @@ RUN addgroup -S pptruser && adduser -S -G pptruser pptruser \
 
 # Run everything after as non-privileged user.
 USER pptruser
+
+
 
 RUN NODE_OPTIONS=--max_old_space_size=4096 npm run build
 
