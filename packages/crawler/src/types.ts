@@ -58,8 +58,8 @@ export const channelSchema = z.object({
 export type Channel = z.infer<typeof channelSchema>;
 
 export const videoBaseSchema = z.object({
-  title: z.string().optional(),
   id: z.string(),
+  title: z.string().optional(),
 });
 export type VideoBase = z.infer<typeof videoBaseSchema>;
 
