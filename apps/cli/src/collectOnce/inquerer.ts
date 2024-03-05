@@ -47,24 +47,18 @@ export const Inquerer = async () => {
       },
     }),
     delayVideo: await input({
-      message: `Delay scraper for each video in seconds ${kleur.gray(`[0-${crawlerConfig.delay.video.max}]`)}`,
+      message: 'Delay scraper for each video in seconds',
       default: '0',
       validate: (input: string) => {
-        if (Number(input) > crawlerConfig.delay.video.max) {
-          return kleur.red(`Limited to ${crawlerConfig.delay.video.max}} seconds`);
-        }
-        if (Number(input) < 0) return kleur.red(`Minimun: 0 seconds`);
+        if (Number(input) < 0) return kleur.red(`Min: 0 seconds`);
         return true;
       },
     }),
     delaySeed: await input({
-      message: `Delay scraper for each seed video in seconds ${kleur.gray(`[0-${crawlerConfig.delay.seed.max}]`)}`,
+      message: 'Delay scraper for each seed video in seconds',
       default: '0',
       validate: (input: string) => {
-        if (Number(input) > crawlerConfig.delay.seed.max) {
-          return kleur.red(`Limited to ${crawlerConfig.delay.seed.max}} seconds`);
-        }
-        if (Number(input) < 0) return kleur.red(`Minimun: 0 seconds`);
+        if (Number(input) < 0) return kleur.red(`Min: 0 seconds`);
         return true;
       },
     }),

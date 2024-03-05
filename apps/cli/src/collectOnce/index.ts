@@ -1,4 +1,10 @@
 import fs from 'fs-extra';
+import {
+  Crawler,
+  CrawlerOptions,
+  type CrawlerConfig,
+  type CrawlerResult,
+} from 'youtube-recommendation-crawler';
 import { log } from '../util/log';
 import { argv } from './argv';
 import { Inquerer } from './inquerer';
@@ -59,11 +65,12 @@ void (async () => {
   const setup = parseConfig(config);
   if (!setup) return;
 
-  const results: CrawlerResult[] = [];
-  const crawler = new Crawler(setup);
-  const results = await crawler(setup);
+  const { keywords, delay, logLevel, ...configCrawler } = config;
 
-  for (const keyword of config.keywords) {
+  const results: CrawlerResult[] = [];
+  const crawler = new Crawler(configCrawler, { delay, logLevel });
+
+  for (const keyword of keywords) {
     const data = await crawler.collect(keyword);
     if (!data) continue;
     results.push(data);

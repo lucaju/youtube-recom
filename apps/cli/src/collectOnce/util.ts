@@ -10,6 +10,7 @@ export const parseConfig = ({
   branches = crawlerConfig.branches.default,
   depth = crawlerConfig.depth.default,
   delay,
+  ...rest
 }: Config) => {
   if (keywords.length === 0) {
     log.warn('At least one keyword must be defined');
@@ -43,22 +44,8 @@ export const parseConfig = ({
     depth = crawlerConfig.branches.max;
   }
 
-  if (delay) {
-    if (delay.seed) {
-      if (delay.seed > crawlerConfig.delay.seed.max) {
-        log.warn(`Limited to depth ${crawlerConfig.delay.seed.max}`);
-        depth = crawlerConfig.delay.seed.max;
-      }
-      if (delay.seed < 0) delay.seed = 0;
-    }
-    if (delay.video) {
-      if (delay.video > crawlerConfig.delay.video.max) {
-        log.warn(`Limited to depth ${crawlerConfig.delay.video.max}`);
-        depth = crawlerConfig.delay.video.max;
-      }
-      if (delay.video < 0) delay.video = 0;
-    }
-  }
+  if (delay?.seed) delay.seed = delay.seed > 0 ? delay.seed : 0;
+  if (delay?.video) delay.video = delay.video > 0 ? delay.video : 0;
 
-  return { keywords, seeds, branches, depth, delay };
+  return { keywords, seeds, branches, depth, delay, ...rest };
 };
