@@ -135,14 +135,19 @@ Searching for ${kleur.magenta(`${keyword}`)}
     //3. Get recommendations for seed videos
     let item = 0;
     for (const video of searchSeeds) {
+      if (this.delay.seed > 0 && item !== 0) {
+        this.spinner.prefixText = '';
+        this.spinner.spinner = 'circleQuarters';
+        this.spinner.start(`Delay: ${this.delay.seed} seconds.\n`);
+        await this.wait(this.delay.seed);
+        this.spinner.stop();
+        this.spinner.spinner = 'dots';
+      }
+
       log.info(`Starting from ${kleur.bgMagenta().black(`${video.title}`)}`);
       await this.getRecommendationsFor(keyword, video);
       log.info('\n');
 
-      if (this.delay.seed > 0 && item < searchSeeds.length - 1) {
-        this.wait(this.delay.seed);
-        log.info(kleur.dim(`Delay: ${this.delay.seed} seconds.\n`));
-      }
       item++;
     }
 
