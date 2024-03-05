@@ -22,7 +22,7 @@ COPY ./package.json .
 # Puppeteer v13.5.0 works with Chromium 100.
 # RUN npm i puppeteer@14.1.1
 
-RUN npm i tsup -g
+RUN npm i husky tsup turbo typescript -g
 
 RUN npm install
 
