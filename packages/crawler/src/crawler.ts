@@ -100,7 +100,7 @@ export class Crawler extends TypedEventEmitter<LocalEventTypes> {
     const searchMessage = `Seed videos for ${kleur.bgMagenta().black(`${keyword}`)}`;
     const seedTitles = searchSeeds.map(({ title }, index) => `${index + 1} - ${title}`);
     log.info(`${searchMessage}:
-      ${kleur.magenta(seedTitles.join('\n'))}\n
+${kleur.magenta(seedTitles.join('\n'))}\n
     `);
 
     this.emit('search', {
@@ -123,9 +123,8 @@ export class Crawler extends TypedEventEmitter<LocalEventTypes> {
     this.results.set(keyword, { keyword, date: startDate, videos: [] });
     const result = this.results.get(keyword)!;
 
-    const onStartMessage = `\n
-    Collect start at: ${kleur.dim(`${startDate.toString()}`)}
-    Searching for ${kleur.magenta(`${keyword}`)}
+    const onStartMessage = `\nCollect start at: ${kleur.dim(`${startDate.toString()}`)}
+Searching for ${kleur.magenta(`${keyword}`)}
     \n`;
     log.info(kleur.magenta(onStartMessage));
     this.emit('start', { message: onStartMessage });
