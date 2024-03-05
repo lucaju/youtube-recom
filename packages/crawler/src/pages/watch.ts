@@ -1,7 +1,7 @@
-import log from 'loglevel';
 import { ElementHandle, Page } from 'puppeteer';
 import { getBrowser } from '../components';
 import { config } from '../config';
+import { log } from '../util/log';
 import type { AdCompanion, Video, VideoBase } from '../types';
 
 export const watchPage = async (id: string) => {
@@ -20,7 +20,7 @@ export const watchPage = async (id: string) => {
   const recommendations: VideoBase[] = await getRecommendations(page);
 
   const video: Video = {
-    id: id,
+    id,
     ...metadata,
     ...stats,
     recommendations,
@@ -101,10 +101,7 @@ const getMetadata = async (page: Page) => {
     return videoDetails;
   } catch (error) {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    log.error(`!! ERROR: getMetadata: ${error}`);
-    let body = await page.$eval('body', (content) => content.innerHTML);
-    if (!body) body = await page.$eval('html', (content) => content.innerHTML).catch(() => '');
-    log.warn(body);
+    log.debug(`!! ERROR: getMetadata: ${error}`);
     return;
   }
 };

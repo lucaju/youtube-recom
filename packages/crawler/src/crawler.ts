@@ -1,11 +1,10 @@
 import kleur from 'kleur';
-import log from 'loglevel';
 import * as emoji from 'node-emoji';
 import ora, { type Ora } from 'ora';
 import { TypedEventEmitter, disposeBrowser, getBrowser } from './components';
 import { config } from './config';
 import { searchPage, watchPage } from './pages';
-import type { CrawlerConfig, CrawlerResult, Delay, Video, VideoBase } from './types';
+import { log } from './util/log';
 
 export { config as crawlerConfig } from './config';
 export * from './types';

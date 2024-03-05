@@ -1,6 +1,6 @@
 import kleur from 'kleur';
-import log from 'loglevel';
 import puppeteer, { type Browser } from 'puppeteer';
+import { log } from '../util/log';
 
 interface BrowserConfig {
   headless?: boolean;

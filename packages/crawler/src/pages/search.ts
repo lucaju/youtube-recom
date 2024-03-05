@@ -1,8 +1,8 @@
 import kleur from 'kleur';
-import log from 'loglevel';
 import type { Browser, ElementHandle } from 'puppeteer';
 import { getBrowser } from '../components';
 import { config } from '../config';
+import { log } from '../util/log';
 import type { CrawlerConfig, VideoBase } from '../types';
 
 type SortType = 'top_rated' | 'view_count' | 'Sorting search results by relevance';
