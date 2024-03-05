@@ -26,8 +26,6 @@ RUN \
   else npm install; \
   fi
 
-COPY . .
-
 # Add user so we don't need --no-sandbox.
 RUN addgroup -S pptruser && adduser -S -G pptruser pptruser \
     && mkdir -p /home/pptruser/Downloads /app \
