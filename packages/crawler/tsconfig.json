@@ -1,17 +1,30 @@
 {
-  "extends": "../tsconfig/base.json",
   "include": ["**/*.ts"],
+  "exclude": ["node_modules"],
   "compilerOptions": {
     "allowJs": true,
     "allowImportingTsExtensions": true,
     "baseUrl": ".",
+    "composite": false,
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "inlineSources": false,
+    "isolatedModules": true,
     "lib": ["es2021", "DOM"],
     "module": "esnext",
+    "moduleResolution": "Node10",
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noEmit": true,
     "paths": {
       "@/*": ["./*"]
     },
+    "preserveWatchOutput": true,
     "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
     "target": "es2020"
   }
 }
