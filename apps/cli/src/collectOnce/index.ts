@@ -1,7 +1,5 @@
 import fs from 'fs-extra';
-import log from 'loglevel';
-import { Crawler, type CrawlerConfig, type CrawlerResult } from 'youtube-recommendation-crawler';
-import { getLogLevelDesc } from '../util';
+import { log } from '../util/log';
 import { argv } from './argv';
 import { Inquerer } from './inquerer';
 import { parseConfig } from './util';

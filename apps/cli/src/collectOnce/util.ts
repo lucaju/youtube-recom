@@ -1,6 +1,6 @@
-import log from 'loglevel';
 import { crawlerConfig } from 'youtube-recommendation-crawler';
 import type { Config } from '.';
+import { log } from '../util/log';
 
 const MAX_KEYWORDS = 5;
 

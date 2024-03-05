@@ -1,6 +1,6 @@
 import { input, select } from '@inquirer/prompts';
 import kleur from 'kleur';
-import type { LocalLogLevel } from '../util';
+import { LogLevelDesc } from 'loglevel';
 
 export interface InquererProps {
   id: string;
