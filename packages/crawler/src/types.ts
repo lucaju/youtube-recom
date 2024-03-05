@@ -21,15 +21,16 @@ export const crawlerConfigSchema = z.object({
   branches: z
     .number()
     .max(config.branches.max)
+    .default(config.branches.default)
     .describe(
       'Number of branches to crawl. A branch is the list of recommended videos from a seed video.',
     )
     .optional(),
   country: z.string().describe('Filter the search to a specific country.').optional(),
-  delay: delaySchema.optional(),
   depth: z
     .number()
     .max(config.depth.max)
+    .default(config.depth.default)
     .describe(
       'Number of sub-branches to crawl. Depth is how deep in foolowing recommendations the crawler should go.',
     )
@@ -38,6 +39,7 @@ export const crawlerConfigSchema = z.object({
   seeds: z
     .number()
     .max(config.seeds.max)
+    .default(config.seeds.default)
     .describe(
       'Number of seed videos to crawl. A seed video is the video with listed on the search by a keyword (ranked by the YouTube).',
     )
