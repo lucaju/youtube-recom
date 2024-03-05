@@ -19,7 +19,7 @@ RUN npm i husky tsup turbo typescript -g
 
 WORKDIR /app
 
-COPY ./package.json .
+COPY . .
 
 RUN \
   if [ -f package-lock.json ]; then npm ci; \
