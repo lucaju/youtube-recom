@@ -244,15 +244,15 @@ export class Crawler extends TypedEventEmitter<LocalEventTypes> {
     result.videos.push(videoInfo);
 
     // 7. drill down on each branch
-    let allRecommendations: (VideoBase | Video)[] = [];
+    let videos: (VideoBase | Video)[] = [];
     const currentVideoRecoms = videoInfo.recommendations?.slice(0, this.branches) ?? [];
     for (const recom of currentVideoRecoms) {
       const recommendations = await this.getRecommendationsFor(keyword, recom, depth + 1);
-      allRecommendations = [...allRecommendations, ...recommendations];
+      videos = [...videos, ...recommendations];
     }
 
     //8. Return videos
-    return allRecommendations;
+    return videos;
   }
 
   async wait(delay = 0) {
