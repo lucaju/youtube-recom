@@ -15,16 +15,16 @@ RUN apk add --no-cache \
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
+RUN npm i husky tsup turbo typescript -g
+
 WORKDIR /app
 
 COPY ./package.json .
 
-# Puppeteer v13.5.0 works with Chromium 100.
-# RUN npm i puppeteer@14.1.1
-
-RUN npm i husky tsup turbo typescript -g
-
-RUN npm install
+RUN \
+  if [ -f package-lock.json ]; then npm ci; \
+  else npm install; \
+  fi
 
 COPY . .
 
