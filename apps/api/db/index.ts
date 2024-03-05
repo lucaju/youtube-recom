@@ -1,9 +1,7 @@
 import kleur from 'kleur';
-import log from 'loglevel';
+import { log } from '@/util/log';
 import mongoose from 'mongoose';
 import { initialize } from './initialize';
-
-export * from './types';
 
 export let connected = false;
 
@@ -22,16 +20,14 @@ export const connect = async () => {
 
   connected
     ? log.warn(kleur.bgCyan().black(' MongoDB connected '))
-    : log.warn(kleur.bgRed().black(' MongoDB id NOT connected '));
+    : log.warn(kleur.bgRed().black(' MongoDB is NOT connected '));
 
   if (mongo) await initialize();
 
   return connected;
 };
 
-export const close = () => {
-  mongoose.connection.close();
-};
+export const close = () => mongoose.connection.close();
 
 export default {
   connect,

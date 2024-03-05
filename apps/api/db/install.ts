@@ -1,6 +1,6 @@
 import kleur from 'kleur';
-import log from 'loglevel';
-import { UserModel } from './users';
+import { log } from '@/util/log';
+import { UserDbModel } from './schemas';
 
 export const install = async () => {
   log.info(kleur.yellow('Initial Setup'));
@@ -9,7 +9,7 @@ export const install = async () => {
   //A. ADMIN USER
   log.info('- Adding admin user');
 
-  const user = new UserModel({
+  const user = new UserDbModel({
     email: process.env.ADMIN_EMAIL,
     name: process.env.ADMIN_NAME,
     role: 'admin',

@@ -1,6 +1,6 @@
-import { connectAgenda } from '@/jobs/agenda';
+import { connectAgenda } from '@/scheduler';
 import { install } from './install';
-import { UserModel } from './users';
+import { UserDbModel } from './schemas';
 
 export const initialize = async () => {
   const ready = await checkUserAdmin();
@@ -9,13 +9,12 @@ export const initialize = async () => {
 };
 
 const checkUserAdmin = async () => {
-  let installed = true;
-
   //check if admin user exists
   const adminEmail = process.env.ADMIN_EMAIL;
   if (!adminEmail) throw Error('Check installation Failed. Missing admin credentials');
 
-  await UserModel.findByEmail(adminEmail).catch(() => (installed = false));
+  const admin = await UserDbModel.findOne({ email: adminEmail });
+  if (!admin) return false;
 
-  return installed;
+  return true;
 };

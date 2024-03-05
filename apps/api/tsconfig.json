@@ -8,13 +8,13 @@
     // "incremental": true,
     "lib": ["es2021"],
     "module": "esnext",
+    "moduleResolution": "Node10",
     "noEmit": true,
     "paths": {
       "@/*": ["./*"]
     },
     "resolveJsonModule": true,
-    "target": "es2021",
-    "moduleResolution": "Node10"
+    "target": "es2021"
     // "types": [
     // "node",
     // "./node_modules/@types",

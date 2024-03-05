@@ -1,12 +1,12 @@
 import 'express-serve-static-core';
-import type { IUser } from './db/users';
+import { UserDbModel } from './db/schemas';
 
 import { Request } from 'express-serve-static-core';
 
 declare global {
   namespace Express {
     interface Request {
-      currentUser?: IUser;
+      currentUser?: InstanceType<typeof UserDbModel>;
       token?: string;
     }
   }
@@ -14,7 +14,7 @@ declare global {
 
 declare module 'express-serve-static-core' {
   interface Request {
-    currentUser?: IUser;
+    currentUser?: InstanceType<typeof UserDbModel>;
     token?: string;
   }
 }

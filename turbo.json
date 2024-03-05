@@ -1,16 +1,17 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalEnv": [
-    "JWT_SECRET",
-    "DATABASE",
-    "MONGODB_URL",
+    "NODE_ENV",
     "PORT",
+    "JWT_SECRET",
+    "SESSION_SECRET",
+    "MONGODB_URL",
+    "DATABASE",
     "ADMIN_EMAIL",
     "ADMIN_NAME",
     "ADMIN_PWD",
     "GMAIL_APP_SPECIFIC_PWD",
-    "SESSION_SECRET",
-    "NODE_ENV"
+    "DISCORD_WEBHOOK_URL"
   ],
   "pipeline": {
     "clean": {
