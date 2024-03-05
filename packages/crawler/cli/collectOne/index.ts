@@ -1,6 +1,6 @@
 import kleur from 'kleur';
-import { scrapeVideo } from 'youtube-recommendation-crawler';
-import { log } from '../util/log';
+import { scrapeVideo } from '../../src';
+import { log } from '../../src/util/log';
 import { argv } from './argv';
 import { Inquerer } from './inquerer';
 

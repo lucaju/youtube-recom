@@ -1,11 +1,7 @@
-import fs from 'fs-extra';
-import {
-  Crawler,
-  CrawlerOptions,
-  type CrawlerConfig,
-  type CrawlerResult,
-} from 'youtube-recommendation-crawler';
-import { log } from '../util/log';
+import { existsSync } from 'node:fs';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { Crawler, CrawlerOptions, type CrawlerConfig, type CrawlerResult } from '../../src';
+import { log } from '../../src/util/log';
 import { argv } from './argv';
 import { Inquerer } from './inquerer';
 import { parseConfig } from './util';
@@ -14,6 +10,7 @@ export interface Config extends CrawlerConfig, CrawlerOptions {
   keywords: string[];
 }
 
+const resultFolder = './results';
 const configFile = 'config.json';
 
 const initSetup = async () => {
@@ -36,8 +33,8 @@ const initSetup = async () => {
     };
     log.setLevel(silent ? log.levels.SILENT : verbose ? log.levels.DEBUG : log.levels.INFO);
   } else {
-    const configFromFile = await fs.readJson(configFile).catch(() => null);
-    config = configFromFile ?? (await Inquerer());
+    const configFromFile = await readFile(configFile, 'utf8').catch(() => null);
+    config = configFromFile ? JSON.parse(configFromFile) : await Inquerer();
     if (!config.logLevel) config.logLevel = log.getLevel();
     log.setLevel(config.logLevel);
   }
@@ -48,15 +45,16 @@ const initSetup = async () => {
 const saveToFile = async (results: CrawlerResult[]) => {
   const keywords = results.map(({ keyword }) => keyword);
 
+  if (!existsSync(resultFolder)) await mkdir(resultFolder);
+
   const result = {
     date: new Date(),
     keywords,
     results,
   };
 
-  const folder = 'results';
   const file = `${keywords.join(',')}-${result.date.toDateString()}.json`;
-  await fs.outputJson(`${folder}/${file}`, result, { spaces: 2 });
+  await writeFile(`${resultFolder}/${file}`, JSON.stringify(result, null, 2));
 };
 
 //Initial Setup

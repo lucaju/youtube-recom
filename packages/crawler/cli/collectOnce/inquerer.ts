@@ -1,8 +1,8 @@
 import { checkbox, input, select } from '@inquirer/prompts';
 import kleur from 'kleur';
-import { crawlerConfig } from 'youtube-recommendation-crawler';
-import type { Config } from '.';
 import { LogLevelDesc } from 'loglevel';
+import type { Config } from '.';
+import { crawlerConfig } from '../../src';
 
 export const Inquerer = async () => {
   const result = {

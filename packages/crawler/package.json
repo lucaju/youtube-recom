@@ -11,33 +11,38 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "import": "./dist/src/index.js",
+      "require": "./dist/src/index.cjs",
+      "types": "./dist/src/index.d.ts"
     }
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/src/index.cjs",
+  "module": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
   "engines": {
     "node": ">=20"
   },
   "scripts": {
-    "build": "npm run clean && tsup src/index.ts --format esm,cjs --dts",
+    "build": "npm run clean && tsup src/index.ts cli/collectOnce/index.ts cli/collectOne/index.ts --format esm,cjs --dts",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "npm run build -- --watch",
+    "collect-one": "node dist/cli/collectOne/index.js",
+    "collect-once": "node dist/cli/collectOnce/index.js",
     "lint": "eslint ."
   },
   "dependencies": {
+    "@inquirer/prompts": "^4.1.0",
     "kleur": "^4.1.5",
     "loglevel": "^1.9.1",
     "node-emoji": "^2.1.3",
     "ora": "7.0.1",
-    "puppeteer": "^22.3.0",
+    "puppeteer": "^22.4.0",
+    "yargs": "^17.7.2",
     "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/node": "^20.11.24",
+    "@types/yargs": "^17.0.32",
     "eslint": "^8.57.0",
     "eslint-config-custom": "*",
     "tsconfig": "*",
