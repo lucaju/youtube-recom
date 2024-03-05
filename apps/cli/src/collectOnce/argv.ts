@@ -51,10 +51,6 @@ export const argv = yargs(hideBin(process.argv))
       boolean: true,
       description: 'Save results on file',
     },
-    verbose: {
-      boolean: true,
-      description: 'Verbose output',
-    },
     silent: {
       boolean: true,
       description: 'Do not print result',

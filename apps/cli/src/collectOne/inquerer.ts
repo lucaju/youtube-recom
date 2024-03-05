@@ -13,14 +13,13 @@ export const Inquerer = async () => {
       message: `YouTube Video ID: ${kleur.gray('(e.g., udSi-A98L-g)')}\n`,
       validate: (input: string) => input !== '',
     }),
-    loglevel: await select<LocalLogLevel>({
+    loglevel: await select<LogLevelDesc>({
       message: `The log level`,
       choices: [
-        { name: 'verbose', value: 'verbose' },
-        { name: 'result', value: 'result' },
-        { name: 'silent', value: 'silent' },
+        { name: 'verbose', value: 'DEBUG' },
+        { name: 'silent', value: 'SILENT' },
       ],
-      default: 'results',
+      default: 'verbose',
     }),
   };
 

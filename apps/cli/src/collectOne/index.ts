@@ -5,20 +5,17 @@ import { argv } from './argv';
 import { Inquerer } from './inquerer';
 
 const initSetup = async () => {
-  let loglevel: log.LogLevelDesc = log.levels.INFO;
   let videoId: string;
 
   if (argv.id) {
-    const { id, silent = false, verbose = false } = argv;
+    const { id, silent = false } = argv;
     videoId = id;
-    loglevel = silent ? log.levels.SILENT : verbose ? log.levels.DEBUG : log.levels.INFO;
+    log.setLevel(silent ? log.levels.SILENT : log.levels.DEBUG);
   } else {
     const response = await Inquerer();
     videoId = response.id;
-    if (response.loglevel) loglevel = getLogLevelDesc(response.loglevel);
+    log.setLevel(response.loglevel);
   }
-
-  log.setLevel(loglevel);
 
   return videoId;
 };

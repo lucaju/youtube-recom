@@ -13,10 +13,6 @@ export const argv = yargs(hideBin(process.argv))
       string: true,
       description: 'YouTube Video ID',
     },
-    verbose: {
-      boolean: true,
-      description: 'Verbose output',
-    },
     silent: {
       boolean: true,
       description: 'Do not print result',

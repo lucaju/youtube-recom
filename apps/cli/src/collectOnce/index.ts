@@ -4,20 +4,17 @@ import { argv } from './argv';
 import { Inquerer } from './inquerer';
 import { parseConfig } from './util';
 
-export interface Config extends CrawlerConfig {
+export interface Config extends CrawlerConfig, CrawlerOptions {
   keywords: string[];
-  logLevel?: 'silent' | 'verbose' | 'result';
 }
 
 const configFile = 'config.json';
 
 const initSetup = async () => {
   let config: Config;
-  let loglevel: log.LogLevelDesc = log.levels.INFO;
 
   if (argv.keywords) {
     const { silent, verbose, ...argsconfig } = argv;
-    loglevel = silent ? log.levels.SILENT : verbose ? log.levels.DEBUG : log.levels.INFO;
     config = {
       keywords: argv.keywords,
       seeds: argsconfig.seeds,
@@ -29,14 +26,15 @@ const initSetup = async () => {
       },
       country: argsconfig.country,
       language: argsconfig.language,
+      logLevel: silent ? log.levels.SILENT : verbose ? log.levels.DEBUG : log.levels.INFO,
     };
+    log.setLevel(silent ? log.levels.SILENT : verbose ? log.levels.DEBUG : log.levels.INFO);
   } else {
     const configFromFile = await fs.readJson(configFile).catch(() => null);
     config = configFromFile ?? (await Inquerer());
+    if (!config.logLevel) config.logLevel = log.getLevel();
+    log.setLevel(config.logLevel);
   }
-
-  if (config.logLevel) loglevel = getLogLevelDesc(config.logLevel);
-  log.setLevel(loglevel);
 
   return config;
 };

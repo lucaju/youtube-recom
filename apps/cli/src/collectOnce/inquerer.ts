@@ -2,7 +2,7 @@ import { checkbox, input, select } from '@inquirer/prompts';
 import kleur from 'kleur';
 import { crawlerConfig } from 'youtube-recommendation-crawler';
 import type { Config } from '.';
-import type { LocalLogLevel } from '../util';
+import { LogLevelDesc } from 'loglevel';
 
 export const Inquerer = async () => {
   const result = {
@@ -78,12 +78,11 @@ export const Inquerer = async () => {
       message: `Store results on`,
       choices: [{ name: 'file', value: 'onFile', checked: true }],
     }),
-    loglevel: await select<LocalLogLevel>({
+    loglevel: await select<LogLevelDesc>({
       message: `The log level`,
       choices: [
-        { name: 'verbose', value: 'verbose' },
-        { name: 'result', value: 'result' },
-        { name: 'silent', value: 'silent' },
+        { name: 'verbose', value: 'DEBUG' },
+        { name: 'silent', value: 'SILENT' },
       ],
       default: 'results',
     }),
