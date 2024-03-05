@@ -4,6 +4,14 @@ import ora, { type Ora } from 'ora';
 import { TypedEventEmitter, disposeBrowser, getBrowser } from './components';
 import { config } from './config';
 import { searchPage, watchPage } from './pages';
+import type {
+  CrawlerConfig,
+  CrawlerOptions,
+  CrawlerResult,
+  Delay,
+  Video,
+  VideoBase,
+} from './types';
 import { log } from './util/log';
 
 export { config as crawlerConfig } from './config';
@@ -22,8 +30,8 @@ export class Crawler extends TypedEventEmitter<LocalEventTypes> {
   private readonly branches: number = config.branches.default;
 
   private readonly delay: Required<Delay> = {
-    seed: config.delay.seed.default,
-    video: config.delay.video.default,
+    seed: 0,
+    video: 0,
   };
 
   private readonly country?: string;
@@ -34,18 +42,19 @@ export class Crawler extends TypedEventEmitter<LocalEventTypes> {
 
   private results: Map<string, CrawlerResult>;
 
-  constructor({ seeds, branches, delay, depth, country, language }: CrawlerConfig = {}) {
+  constructor(
+    { seeds, branches, depth, country, language }: CrawlerConfig = {},
+    options: CrawlerOptions = {},
+  ) {
     super();
+
+    //OPTIONS
+    this.setOptions(options);
+
+    //Config
     if (seeds) this.seeds = seeds < config.seeds.max ? seeds : config.seeds.max;
     if (branches) this.branches = branches < config.branches.max ? branches : config.branches.max;
     if (depth) this.maxDepth = depth < config.depth.max ? depth : config.depth.max;
-    if (delay?.seed) {
-      this.delay.seed = delay.seed < config.delay.seed.max ? delay.seed : config.delay.seed.max;
-    }
-    if (delay?.video) {
-      this.delay.video =
-        delay.video < config.delay.video.max ? delay.video : config.delay.video.max;
-    }
 
     this.country = country;
     this.language = language;
@@ -60,14 +69,14 @@ export class Crawler extends TypedEventEmitter<LocalEventTypes> {
     log.info(kleur.magenta(`Youtube Recommendation Crawler\n`));
 
     log.info(
-      kleur.blue(`Config:\n`),
-      kleur.gray(`- seeds: ${seeds}\n`),
-      kleur.gray(`- branches: ${this.branches}\n`),
-      kleur.gray(`- depth: ${this.maxDepth}\n`),
-      kleur.gray(`- delay:\n`),
-      kleur.gray(`  - seed: ${this.delay.seed}\n`),
-      kleur.gray(`  - video: ${this.delay.video}`),
+      `${kleur.blue('Config:')} ${kleur.blue(`{ seeds: ${this.seeds}, branches: ${this.branches}, depth: ${this.maxDepth}${this.country ? `, country: ${this.country}` : ''}${this.language ? `, language: ${this.language}` : ''} }`)}`,
     );
+
+    if (this.delay.seed > 0 || this.delay.video > 0) {
+      log.info(
+        `${kleur.blue('Options:')} ${kleur.blue(`{ delay: { ${this.delay.seed ? `seed: ${this.delay.seed}, ` : ''}${this.delay.video ? `video: ${this.delay.video}` : ''} } }`)}`,
+      );
+    }
 
     this.results = new Map();
   }
@@ -77,16 +86,36 @@ export class Crawler extends TypedEventEmitter<LocalEventTypes> {
       seeds: this.seeds,
       branches: this.branches,
       depth: this.maxDepth,
-      delay: {
-        seed: this.delay.seed,
-        video: this.delay.video,
-      },
     };
 
     if (this.country) config.country = this.country;
     if (this.language) config.language = this.language;
 
     return config;
+  }
+
+  getOptions(): CrawlerOptions {
+    return {
+      delay: {
+        seed: this.delay.seed,
+        video: this.delay.video,
+      },
+      logLevel: log.getLevel(),
+    };
+  }
+
+  setOptions(options: Partial<CrawlerOptions>) {
+    if (options.logLevel) log.setLevel(options.logLevel);
+    if (options.delay?.seed) this.delay.seed = options.delay.seed;
+    if (options.delay?.video) this.delay.video = options.delay.video;
+  }
+
+  setSeedDelay(value: number) {
+    this.delay.seed = value > 0 ? value : 0;
+  }
+
+  setVideoDelay(value: number) {
+    this.delay.video = value > 0 ? value : 0;
   }
 
   private async search(keyword: string) {

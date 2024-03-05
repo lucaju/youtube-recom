@@ -1,21 +1,17 @@
+import { LogLevelDesc } from 'loglevel';
 import z from 'zod';
 import { config } from './config';
 
-export const delaySchema = z
-  .object({
-    video: z
-      .number()
-      .max(config.delay.video.max)
-      .describe('Delay scraper for each video in seconds')
-      .optional(),
-    seed: z
-      .number()
-      .max(config.delay.seed.max)
-      .describe('Delay scraper for each seed video in seconds')
-      .optional(),
-  })
-  .describe('Delay settings. It pauses the scraper for a given number of seconds.');
+export const delaySchema = z.object({
+  video: z.number().default(0).describe('Delay scraper for each video in seconds').optional(),
+  seed: z.number().default(0).describe('Delay scraper for each seed video in seconds').optional(),
+});
 export type Delay = z.infer<typeof delaySchema>;
+
+export type CrawlerOptions = Delay & {
+  delay?: Delay;
+  logLevel?: LogLevelDesc;
+};
 
 export const crawlerConfigSchema = z.object({
   branches: z
