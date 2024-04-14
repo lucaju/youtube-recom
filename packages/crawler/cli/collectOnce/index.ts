@@ -1,5 +1,4 @@
-import { existsSync } from 'node:fs';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import {
   Crawler,
   CrawlerOptions,
@@ -38,7 +37,7 @@ const initSetup = async () => {
     };
     log.setLevel(silent ? log.levels.SILENT : verbose ? log.levels.DEBUG : log.levels.INFO);
   } else {
-    const configFromFile = await readFile(configFile, 'utf8').catch(() => null);
+    const configFromFile = readFileSync(configFile, 'utf8');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     config = configFromFile ? (JSON.parse(configFromFile) as unknown as Config) : await Inquerer();
     if (!config.logLevel) config.logLevel = log.getLevel();
@@ -51,7 +50,7 @@ const initSetup = async () => {
 const saveToFile = async (results: CrawlerResult[]) => {
   const keywords = results.map(({ keyword }) => keyword);
 
-  if (!existsSync(resultFolder)) await mkdir(resultFolder);
+  if (!existsSync(resultFolder)) mkdirSync(resultFolder);
 
   const result = {
     date: new Date(),
@@ -60,7 +59,7 @@ const saveToFile = async (results: CrawlerResult[]) => {
   };
 
   const file = `${keywords.join(',')}-${result.date.toDateString()}.json`;
-  await writeFile(`${resultFolder}/${file}`, JSON.stringify(result, null, 2));
+  writeFileSync(`${resultFolder}/${file}`, JSON.stringify(result, null, 2));
 };
 
 //Initial Setup

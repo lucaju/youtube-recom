@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { EventEmitter } from 'node:events';
+import { EventEmitter } from 'events';
 
 export class TypedEventEmitter<TEvents extends Record<string, any>> {
   private emitter = new EventEmitter();
@@ -15,7 +14,7 @@ export class TypedEventEmitter<TEvents extends Record<string, any>> {
     eventName: TEventName,
     handler: (...eventArg: TEvents[TEventName]) => void,
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.emitter.on(eventName, handler as any);
   }
 
@@ -23,7 +22,7 @@ export class TypedEventEmitter<TEvents extends Record<string, any>> {
     eventName: TEventName,
     handler: (...eventArg: TEvents[TEventName]) => void,
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.emitter.off(eventName, handler as any);
   }
 
