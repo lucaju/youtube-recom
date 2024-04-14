@@ -38,9 +38,9 @@ export const routerAllProjects = s.router(contract.projects.all, {
 
       await stopAllJob();
 
-      log.warn('All Projects stopped');
+      log.warn('All Projects deactivated');
 
-      return { status: 200, body: { message: 'All Projects stopped' } };
+      return { status: 200, body: { message: 'All Projects deactivated' } };
     },
   },
 });
