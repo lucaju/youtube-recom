@@ -24,11 +24,7 @@ export const Results = async ({ project }: Props) => {
 
   return (
     <div className="flext">
-      {!results ? (
-        <></>
-      ) : (
-        results.map((result) => <Result key={result.id} project={project} result={result} />)
-      )}
+      {results?.map((result) => <Result key={result.id} project={project} result={result} />)}
     </div>
   );
 };
