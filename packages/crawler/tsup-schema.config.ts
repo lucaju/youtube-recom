@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  name: 'schema',
+  name: 'crawler-schema',
   entry: ['src/types/index.ts'],
   format: ['esm', 'cjs'],
   dts: true,

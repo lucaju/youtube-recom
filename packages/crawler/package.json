@@ -30,7 +30,7 @@
     "build": "npm run clean && tsup && npm run build-cli && npm run build-schema",
     "build-schema": "tsup --config tsup-schema.config.ts",
     "build-cli": "tsup --config tsup-cli.config.ts",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -rf dist-cli && rm -rf schema",
     "dev": "npm run build -- --watch",
     "collect-one": "node dist-cli/collectOne/index.js",
     "collect-once": "node dist-cli/collectOnce/index.js",

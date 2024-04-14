@@ -27,7 +27,7 @@
     "build-contract": "tsup --config tsup-contract.config.ts",
     "build": "tsup && npm run build-contract",
     "dev": "npm run build -- --watch --onSuccess \"node --watch transpiled/server/index.js\"",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist  && rm -rf transpiled",
     "lint": "eslint .",
     "start": "node transpiled/server/index.js"
   },

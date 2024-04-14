@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  name: 'cli',
+  name: 'crawler-cli',
   entry: ['cli/collectOnce/index.ts', 'cli/collectOne/index.ts'],
   format: ['esm', 'cjs'],
   dts: true,

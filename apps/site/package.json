@@ -12,6 +12,7 @@
     "node": ">=20"
   },
   "scripts": {
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

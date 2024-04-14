@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "clean": "turbo clean && rm -rf node_modules",
+    "clean": "turbo clean && rm -rf node_modules && rm -rf .turbo",
     "cm": "git-cz",
     "collect-once": "node packages/crawler/dist/cli/collectOnce/index.js",
     "collect-one": "node packages/crawler/dist/cli/collectOne/index.js",
