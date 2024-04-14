@@ -27,7 +27,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "build": "npm run clean && tsup && build-cli && build-schema",
+    "build": "npm run clean && tsup && npm run build-cli && npm run build-schema",
     "build-schema": "tsup --config tsup-schema.config.ts",
     "build-cli": "tsup --config tsup-cli.config.ts",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
