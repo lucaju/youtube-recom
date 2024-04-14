@@ -11,7 +11,9 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IoMdFingerPrint } from 'react-icons/io';
+import { RxReload } from 'react-icons/rx';
 import { z } from 'zod';
+import { PasswordInput } from '../ui/password-input';
 import { TypographyMuted } from '../ui/typography';
 
 const FormSchema = z.object({
@@ -23,6 +25,7 @@ export default function Authentication() {
   const router = useRouter();
 
   const [error, setError] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -34,15 +37,13 @@ export default function Authentication() {
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setError('');
+    setIsProcessing(true);
 
     const response = await signIn('credentials', { redirect: false, ...data });
-
-    if (!response) {
-      setError('Something wrong');
-      return;
-    }
-    if (response.error) {
-      setError(response.error);
+   
+    if (response?.error === 'CredentialsSignin') {
+      setError('Email or password is incorrect');
+      setIsProcessing(false);
       return;
     }
 
@@ -57,6 +58,7 @@ export default function Authentication() {
             <form className="grid w-full items-center gap-4" onSubmit={form.handleSubmit(onSubmit)}>
               <FormField
                 control={form.control}
+                disabled={isProcessing}
                 name="email"
                 render={({ field }) => (
                   <FormItem className="flex flex-col space-y-1.5">
@@ -69,22 +71,38 @@ export default function Authentication() {
               />
               <FormField
                 control={form.control}
+                disabled={isProcessing}
                 name="password"
                 render={({ field }) => (
                   <div className="flex space-x-2">
                     <FormItem className="w-full">
                       <FormControl>
-                        <Input
+                        {/* <Input
                           autoComplete="current-password"
                           placeholder="Password"
                           type="password"
+                          {...field}
+                        /> */}
+                        <PasswordInput
+                          autoComplete="current-password"
+                          placeholder="Password"
                           {...field}
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
-                    <Button className="w-11" size="icon" type="submit" variant="secondary">
-                      <IoMdFingerPrint className="h-4 w-4" />
+                    <Button
+                      className="w-11"
+                      disabled={isProcessing}
+                      size="icon"
+                      type="submit"
+                      variant="secondary"
+                    >
+                      {isProcessing ? (
+                        <RxReload className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <IoMdFingerPrint className="h-4 w-4" />
+                      )}
                     </Button>
                   </div>
                 )}

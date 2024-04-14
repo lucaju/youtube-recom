@@ -1,6 +1,6 @@
 {
   "extends": ["//"],
-  "globalEnv": ["PORT", "NODE_ENV"],
+  "globalEnv": ["PORT", "NODE_ENV", "SERVER_API_URL", "AUTH_SECRET"],
   "pipeline": {
     "build": {
       "outputs": ["dist/**"]

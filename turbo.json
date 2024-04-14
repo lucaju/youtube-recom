@@ -13,7 +13,8 @@
     "ADMIN_PWD",
     "GMAIL_APP_SPECIFIC_PWD",
     "DISCORD_WEBHOOK_URL",
-    "NEXT_PUBLIC_AUTH_API_URL"
+    "SERVER_API_URL",
+    "AUTH_SECRET"
   ],
   "pipeline": {
     "clean": {

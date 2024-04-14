@@ -1,10 +1,9 @@
-import { serverApi } from '@/serverApi';
-import { authOptions } from '@/app/api/auth/auth';
+import { auth } from '@/auth';
 import { Button } from '@/components/ui/button';
 import { Pill } from '@/components/ui/pill';
 import { Separator } from '@/components/ui/separator';
+import { serverApi } from '@/serverApi';
 import { format } from 'date-fns';
-import { getServerSession } from 'next-auth';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
@@ -19,7 +18,7 @@ import { Title } from './_components/title';
 import { getJobDates } from './helper';
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   if (!session) {
     redirect('/');
   }

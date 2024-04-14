@@ -1,6 +1,5 @@
+import { auth } from '@/auth';
 import { serverApi } from '@/serverApi';
-import { authOptions } from '@/app/api/auth/auth';
-import { getServerSession } from 'next-auth';
 import type { Project } from 'youtube-recommendation-crawler-api/types';
 import { Result } from './result';
 
@@ -9,7 +8,7 @@ interface Props {
 }
 
 export const Results = async ({ project }: Props) => {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   if (!session) {
     return null;
   }

@@ -1,9 +1,8 @@
 'use server';
 
+import { auth } from '@/auth';
 import { serverApi } from '@/serverApi';
-import { authOptions } from '@/app/api/auth/auth';
 import { ClientInferRequest } from '@ts-rest/core';
-import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { contract } from 'youtube-recommendation-crawler-api/dist';
 import { z } from 'zod';
@@ -12,7 +11,7 @@ import { FormSchema } from './form';
 type CreateProjectRequest = ClientInferRequest<typeof contract.projects.create>;
 
 export const createProject = async (data: z.infer<typeof FormSchema>) => {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   if (!session) return { error: 'Not authenticated' };
 
   // transform data

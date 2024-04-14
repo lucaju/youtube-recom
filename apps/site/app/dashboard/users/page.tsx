@@ -1,15 +1,14 @@
-import { authOptions } from '@/app/api/auth/auth';
+import { auth } from '@/auth';
 import { Separator } from '@/components/ui/separator';
 import { TypographyH3 } from '@/components/ui/typography';
 import { serverApi } from '@/serverApi';
-import { getServerSession } from 'next-auth/next';
 import { redirect } from 'next/navigation';
 import { AddUser } from './_components/add-user';
 import { DataTable } from './_components/datatable';
 import { columns } from './_components/datatable/columns';
 
 export default async function Page() {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   if (!session) {
     redirect('/');
   }

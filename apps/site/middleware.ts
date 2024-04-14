@@ -1,10 +1,8 @@
-import { withAuth } from 'next-auth/middleware';
+import authConfig from './auth.config';
+import NextAuth from 'next-auth';
 
-export const config = { matcher: ['/dashboard/:path*'] };
+export const config = {
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+}
 
-export default withAuth({
-  pages: {
-    signIn: '/',
-    error: '/error',
-  },
-});
+export const { auth: middleware } = NextAuth(authConfig);

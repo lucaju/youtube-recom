@@ -1,12 +1,10 @@
+import { auth } from '@/auth';
 import SideBar from '@/components/sidebar';
 import Topbar from '@/components/topbar';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../api/auth/auth';
-
 import '../prose-mirror.css';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   return (
     <section>
       <Topbar />

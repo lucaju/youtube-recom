@@ -1,17 +1,14 @@
 import { serverApi } from '@/serverApi';
-import type { NextAuthOptions } from 'next-auth';
+import type { NextAuthConfig } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-/* The code block is defining the authentication options for NextAuth. */
-export const authOptions: NextAuthOptions = {
+export default {
   providers: [
     CredentialsProvider({
       // The name to display on the sign in form (e.g. "Sign in with...")
       name: 'Credentials',
-      // `credentials` is used to generate a form on the sign in page.
       // You can specify which fields should be submitted, by adding keys to the `credentials` object.
       // e.g. domain, username, password, 2FA token, etc.
-      // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
         email: { label: 'email', placeholder: 'email', type: 'text' },
         password: { label: 'Password', type: 'password' },
@@ -23,10 +20,8 @@ export const authOptions: NextAuthOptions = {
           },
         });
 
-        console.log(status, body);
-
         if (status === 404 || status === 500) {
-          throw new Error(body.message);
+          // throw new Error(body.message);
           return null;
         }
 
@@ -35,6 +30,9 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  pages: {
+    signIn: "/",
+  },
   // session: {
   //   maxAge: SESSION_MAX_AGE, //* [default is 30 days -> 30 * 24 * 60 * 60];
   // },
@@ -47,9 +45,10 @@ export const authOptions: NextAuthOptions = {
         token.name = user.name;
         token.email = user.email;
         token.user = {
-          id: user.id,
-          name: user.name,
-          email: user.email,
+          id: user.id!,
+          name: user.name!,
+          email: user.email!,
+          emailVerified: null,
           token: user.token,
           role: user.role,
         };
@@ -61,4 +60,4 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-};
+} satisfies NextAuthConfig;
