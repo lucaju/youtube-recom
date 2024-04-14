@@ -3,7 +3,6 @@ python
 
 /*.env
 /.env-cmdrc.js
-/results
 /traefik
 /mongodb
 /public
@@ -21,7 +20,6 @@ Makefile
 #packages
 **/node_modules
 **/commons/dist
-**/results
 
 
 **//docs

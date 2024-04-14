@@ -5,6 +5,7 @@ module.exports = {
     browser: true,
     es2021: true,
   },
+  ignorePatterns: ['.eslintrc.cjs'],
   overrides: [
     {
       env: { node: true },

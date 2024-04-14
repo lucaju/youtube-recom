@@ -1,10 +1,15 @@
 import { existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { Crawler, CrawlerOptions, type CrawlerConfig, type CrawlerResult } from '../../src';
-import { log } from '../../src/util/log';
-import { argv } from './argv';
-import { Inquerer } from './inquerer';
-import { parseConfig } from './util';
+import {
+  Crawler,
+  CrawlerOptions,
+  type CrawlerConfig,
+  type CrawlerResult,
+} from '../../src/index.ts';
+import { log } from '../../src/util/log.ts';
+import { argv } from './argv.ts';
+import { Inquerer } from './inquerer.ts';
+import { parseConfig } from './util.ts';
 
 export interface Config extends CrawlerConfig, CrawlerOptions {
   keywords: string[];
@@ -34,7 +39,8 @@ const initSetup = async () => {
     log.setLevel(silent ? log.levels.SILENT : verbose ? log.levels.DEBUG : log.levels.INFO);
   } else {
     const configFromFile = await readFile(configFile, 'utf8').catch(() => null);
-    config = configFromFile ? JSON.parse(configFromFile) : await Inquerer();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    config = configFromFile ? (JSON.parse(configFromFile) as unknown as Config) : await Inquerer();
     if (!config.logLevel) config.logLevel = log.getLevel();
     log.setLevel(config.logLevel);
   }

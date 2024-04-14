@@ -1,6 +1,6 @@
-import type { Config } from '.';
-import { crawlerConfig } from '../../src';
-import { log } from '../../src/util/log';
+import type { Config } from './index.ts';
+import { crawlerConfig } from '../../src/index.ts';
+import { log } from '../../src/util/log.ts';
 
 const MAX_KEYWORDS = 5;
 

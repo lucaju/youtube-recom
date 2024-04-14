@@ -7,9 +7,9 @@ import cors from 'cors';
 import 'dotenv/config';
 import express, { type Express } from 'express';
 import helmet from 'helmet';
-import * as swaggerUi from 'swagger-ui-express';
+// import * as swaggerUi from 'swagger-ui-express';
 import { router } from './routes';
-import { openApiDocument } from './swagger';
+// import { openApiDocument } from './swagger';
 import { morganWinstonMiddleware } from './logger';
 import { Session } from './session';
 // import { createIo } from './socket';
@@ -34,11 +34,10 @@ export const createServer = () => {
   createExpressEndpoints(contract, router, server);
 
   server.get('/healthz', (_req, res) => res.send('OK'));
-  server.get('/open-api.json', (_req, res) => res.send(openApiDocument));
+  // server.get('/open-api.json', (_req, res) => res.send(openApiDocument));
+  // server.use('/', swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
-  server.use('/', swaggerUi.serve, swaggerUi.setup(openApiDocument));
-
-  db.connect();
+  void db.connect();
 
   return server;
 };

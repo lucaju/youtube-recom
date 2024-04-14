@@ -1,8 +1,8 @@
 import kleur from 'kleur';
-import { scrapeVideo } from '../../src';
-import { log } from '../../src/util/log';
-import { argv } from './argv';
-import { Inquerer } from './inquerer';
+import { scrapeVideo } from '../../src/index.ts';
+import { log } from '../../src/util/log.ts';
+import { argv } from './argv.ts';
+import { Inquerer } from './inquerer.ts';
 
 const initSetup = async () => {
   let videoId: string;

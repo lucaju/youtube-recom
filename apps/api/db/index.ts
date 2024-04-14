@@ -1,5 +1,5 @@
-import kleur from 'kleur';
 import { log } from '@/util/log';
+import kleur from 'kleur';
 import mongoose from 'mongoose';
 import { initialize } from './initialize';
 
@@ -29,8 +29,10 @@ export const connect = async () => {
 
 export const close = () => mongoose.connection.close();
 
-export default {
+const db = {
   connect,
   close,
   connected,
 };
+
+export default db;

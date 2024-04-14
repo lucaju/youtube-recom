@@ -1,8 +1,9 @@
 import { contract } from '@/contract';
-import { ProjectDbModel } from '@/db/schemas';
-import { CrawlerJobData, agenda } from '@/scheduler';
+import { ProjectDbModel } from '@/db/projects/models';
+import { agenda } from '@/scheduler';
 import { auth, bearerJWT } from '@/server/middleware/auth';
 import { initServer } from '@ts-rest/express';
+import { Job } from '@whisthub/agenda';
 import { startOfToday } from 'date-fns';
 import { scrapeVideo } from 'youtube-recommendation-crawler';
 import * as actions from '../projects/_helper';
@@ -20,7 +21,7 @@ export const routerCrawler = s.router(contract.crawler, {
       return { status: 200, body: video };
     },
   },
-  createCrawler: {
+  create: {
     middleware: [
       async (req, _res, next) => {
         const token = req.header('Authorization')?.replace('Bearer ', '');
@@ -50,16 +51,14 @@ export const routerCrawler = s.router(contract.crawler, {
       const existingProject = await ProjectDbModel.findOne({
         keywords: { $in: body.keywords },
         crawlerConfig: { $in: body.crawlerConfig },
-        owner: currentUser.id,
+        ownerId: currentUser.id,
         createdAt: { $gte: startOfToday() },
       });
 
       if (existingProject) {
-        const existingJobs = await agenda.jobs({ name: 'crawler' });
-        const existingJob = existingJobs.find((job) => {
-          const data = job.attrs.data as CrawlerJobData;
-          return data.projectId === existingProject.id;
-        });
+        const existingJob: Job = (
+          await agenda.jobs({ name: 'crawler', 'data.projectId': existingProject.id })
+        )[0];
 
         if (existingJob) {
           const isRunning = await existingJob.isRunning();
@@ -97,44 +96,38 @@ export const routerCrawler = s.router(contract.crawler, {
       }
 
       //2. Create project
-      const project = await actions.createProject(currentUser.id, { ...body, ephemeral: true });
-
-      const jobs = await agenda.jobs({ name: 'crawler' });
-      const job = jobs.find((job) => {
-        const data = job.attrs.data as CrawlerJobData;
-        return data.projectId === project.id;
+      const project = await actions.createProject(currentUser.id.toString(), {
+        ...body,
+        ephemeral: true,
       });
+
+      const job: Job = (await agenda.jobs({ name: 'crawler', 'data.projectId': project.id }))[0];
 
       const isRunning = await job?.isRunning();
 
       return {
         status: 201,
-        body: { crawlerId: project.id, message: `Crawler ${isRunning ? 'started' : 'queued'}` },
+        body: {
+          crawlerId: project.id,
+          message: `Crawler ${isRunning ? 'started' : 'queued'}`,
+        },
       };
     },
   },
-  getCrawlerResult: {
+  results: {
     middleware: [auth('bearerJWT')],
     handler: async ({ params, req: { currentUser } }) => {
-      if (!currentUser) {
+      if (!currentUser || currentUser.role !== 'admin') {
         return { status: 401, body: { message: 'Unauthorized' } };
       }
 
-      const owner = currentUser.role === 'admin' ? undefined : currentUser.id;
+      const project = await ProjectDbModel.findById(params.id);
 
-      const project = await ProjectDbModel.findOne({
-        _id: params.id,
-        ...(owner ? { owner } : {}),
-      });
       if (!project) {
         return { status: 404, body: { message: 'Crawler not found' } };
       }
 
-      const jobs = await agenda.jobs({ name: 'crawler' });
-      const job = jobs.find((job) => {
-        const data = job.attrs.data as CrawlerJobData;
-        return data.projectId === project.id;
-      });
+      const job: Job = (await agenda.jobs({ name: 'crawler', 'data.projectId': project.id }))[0];
       if (!job) {
         return { status: 404, body: { message: 'Crawler not found' } };
       }

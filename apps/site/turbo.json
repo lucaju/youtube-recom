@@ -1,0 +1,9 @@
+{
+  "extends": ["//"],
+  "globalEnv": ["PORT", "NODE_ENV"],
+  "pipeline": {
+    "build": {
+      "outputs": ["dist/**"]
+    }
+  }
+}

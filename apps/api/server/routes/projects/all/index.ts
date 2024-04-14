@@ -1,6 +1,7 @@
 import { contract } from '@/contract';
-import { ProjectDbModel, type Project } from '@/db/schemas';
+import { ProjectDbModel } from '@/db/projects/models';
 import { auth } from '@/server/middleware/auth';
+import type { Project } from '@/types';
 import { log } from '@/util/log';
 import { initServer } from '@ts-rest/express';
 import { stopAllJob } from './_helper';
@@ -8,17 +9,17 @@ import { stopAllJob } from './_helper';
 const s = initServer();
 
 export const routerAllProjects = s.router(contract.projects.all, {
-  projectsAll: {
+  get: {
     middleware: [auth('bearerJWT')],
     handler: async ({ query, req: { currentUser } }) => {
       if (currentUser?.role !== 'admin') {
         return { status: 401, body: { message: 'Unauthorized' } };
       }
 
-      const filters: Partial<Pick<Project, 'owner' | 'active' | 'ephemeral'>> = {
-        owner: currentUser.id,
+      const filters: Partial<Pick<Project, 'ownerId' | 'status' | 'ephemeral'>> = {
+        ownerId: currentUser.id,
+        status: query.status,
       };
-      if (query.active) filters.active = query.active === 'true' ? true : false;
       if (query.ephemeral) filters.ephemeral = query.ephemeral === 'true' ? true : false;
 
       const projects = await ProjectDbModel.find(filters)
@@ -28,7 +29,7 @@ export const routerAllProjects = s.router(contract.projects.all, {
       return { status: 200, body: projects };
     },
   },
-  projectsStop: {
+  deactivate: {
     middleware: [auth('bearerJWT')],
     handler: async ({ req: { currentUser } }) => {
       if (!currentUser || currentUser.role !== 'admin') {

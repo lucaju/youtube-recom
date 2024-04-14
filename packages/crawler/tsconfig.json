@@ -5,8 +5,9 @@
     "allowJs": true,
     "allowImportingTsExtensions": true,
     "baseUrl": ".",
-    "lib": ["es2021", "DOM"],
-    "module": "esnext",
+    "lib": ["es2022", "DOM"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "noEmit": true,
     "paths": {
       "@/*": ["./*"]

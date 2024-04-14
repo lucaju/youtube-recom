@@ -1,4 +1,4 @@
-import { ProjectDbModel } from '@/db/schemas/projects';
+import { ProjectDbModel } from '@/db/projects/models';
 import { agenda } from '@/scheduler';
 
 export const stopAllJob = async () => {
@@ -6,16 +6,7 @@ export const stopAllJob = async () => {
 
   for (const job of jobs) {
     await job.disable().save();
-
-    await ProjectDbModel.findOneAndUpdate(
-      { ative: true, 'status.scheduled': true },
-      {
-        status: {
-          scheduled: false,
-          running: false,
-          lastDate: job.attrs.lastRunAt,
-        },
-      },
-    );
   }
+
+  await ProjectDbModel.updateMany({ statuts: 'active' }, { statuts: 'inactive' });
 };

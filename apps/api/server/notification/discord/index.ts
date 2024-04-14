@@ -28,7 +28,7 @@ const formatMessage = (result: CrawlerResult) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const postMessage = async (content: string, payload?: any) => {
-  const url = process.env.DISCORD_WEBHOOK_URL!;
+  const url = process.env.DISCORD_WEBHOOK_URL;
   await fetch(`${url}?wait=true`, {
     method: 'POST',
     headers: { 'Content-Type': payload ? 'multipart/form-data' : 'application/json' },

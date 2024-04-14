@@ -1,51 +1,52 @@
 import { contract } from '@/contract';
-import { ProjectDbModel, type Project } from '@/db/schemas';
+import { ProjectDbModel } from '@/db/projects/models';
 import { auth, bearerJWT } from '@/server/middleware/auth';
+import type { Project } from '@/types';
 import { log } from '@/util/log';
 import { initServer } from '@ts-rest/express';
 import * as actions from './_helper';
 import { routerAllProjects } from './all';
+import { routerProjectsJobs } from './jobs';
+import { routerProjectsResults } from './results';
 
 const s = initServer();
 
 export const routerProjects = s.router(contract.projects, {
   all: routerAllProjects,
-  projects: {
+  results: routerProjectsResults,
+  jobs: routerProjectsJobs,
+  getAll: {
     middleware: [auth('bearerJWT')],
     handler: async ({ query, req: { currentUser } }) => {
       if (!currentUser) {
         return { status: 401, body: { message: 'Unauthorized' } };
       }
 
-      const filters: Partial<Pick<Project, 'owner' | 'active' | 'ephemeral'>> = {
-        owner: currentUser.id,
+      const filters: Partial<Pick<Project, 'ownerId' | 'status' | 'ephemeral'>> = {
+        ownerId: currentUser.id,
+        status: query.status,
       };
-      if (query.active) filters.active = query.active === 'true' ? true : false;
-      if (query.ephemeral) filters.ephemeral = query.ephemeral === 'true' ? true : false;
+      if (query?.ephemeral) filters.ephemeral = query.ephemeral === 'true' ? true : false;
 
-      const projects = await ProjectDbModel.find(filters).select([
-        '-owner',
-        '-results',
-        '-preferences',
-      ]);
+      const projects = await ProjectDbModel.find()
+        .select(['-results', '-preferences'])
+        .populate('owner', ['id', 'name']);
 
-      return { status: 200, body: projects };
+      return { status: 200, body: projects.reverse() };
     },
   },
-  project: {
+  get: {
     middleware: [auth('bearerJWT')],
     handler: async ({ params, query, req: { currentUser } }) => {
-      if (!currentUser) {
+      if (!currentUser || currentUser.role !== 'admin') {
         return { status: 401, body: { message: 'Unauthorized' } };
       }
 
-      const owner = currentUser.role === 'admin' ? undefined : currentUser.id;
       const includeResults = !query.results ? undefined : query.results === 'true' ? true : false;
 
-      const project = await ProjectDbModel.findOne({
-        _id: params.id,
-        ...(owner ? { owner } : {}),
-      }).select(includeResults ? '' : '-results');
+      const project = await ProjectDbModel.findById(params.id).select(
+        includeResults ? '' : '-results',
+      );
 
       if (!project) {
         return { status: 404, body: { message: 'Project not found' } };
@@ -54,32 +55,7 @@ export const routerProjects = s.router(contract.projects, {
       return { status: 200, body: project };
     },
   },
-  projectResults: {
-    middleware: [auth('bearerJWT')],
-    handler: async ({ params, req: { currentUser } }) => {
-      if (!currentUser) {
-        return { status: 401, body: { message: 'Unauthorized' } };
-      }
-
-      const owner = currentUser.role === 'admin' ? undefined : currentUser.id;
-
-      const project = await ProjectDbModel.findOne({
-        _id: params.id,
-        ...(owner ? { owner } : {}),
-      }).select('results');
-
-      if (!project) {
-        return { status: 404, body: { message: 'Project not found' } };
-      }
-
-      if (!project.results) {
-        return { status: 200, body: { message: 'There are no results for this project yet' } };
-      }
-
-      return { status: 200, body: project.results };
-    },
-  },
-  createProject: {
+  create: {
     middleware: [
       async (req, _res, next) => {
         const token = req.header('Authorization')?.replace('Bearer ', '');
@@ -105,11 +81,10 @@ export const routerProjects = s.router(contract.projects, {
         return { status: 401, body: { message: 'Unauthorized' } };
       }
       const project = await actions.createProject(currentUser.id, body);
-
       return { status: 201, body: project };
     },
   },
-  updateProject: {
+  update: {
     middleware: [
       async (req, _res, next) => {
         const token = req.header('Authorization')?.replace('Bearer ', '');
@@ -131,16 +106,11 @@ export const routerProjects = s.router(contract.projects, {
       },
     ],
     handler: async ({ params, body, req: { currentUser } }) => {
-      if (!currentUser) {
+      if (!currentUser || currentUser.role !== 'admin') {
         return { status: 401, body: { message: 'Unauthorized' } };
       }
 
-      const owner = currentUser.role === 'admin' ? undefined : currentUser.id;
-
-      const updatedProject = await actions.updateProject(
-        { id: params.id, owner },
-        { title: body.title },
-      );
+      const updatedProject = await actions.updateProject(params.id, body);
 
       if (!updatedProject) {
         return { status: 404, body: { message: 'Project not found' } };
@@ -149,15 +119,14 @@ export const routerProjects = s.router(contract.projects, {
       return { status: 200, body: updatedProject };
     },
   },
-  deleteProject: {
+  delete: {
     middleware: [auth('bearerJWT')],
     handler: async ({ params, req: { currentUser } }) => {
       if (!currentUser || currentUser.role !== 'admin') {
         return { status: 401, body: { message: 'Unauthorized' } };
       }
 
-      const owner = currentUser.role === 'admin' ? undefined : currentUser.id;
-      const deletedProject = await actions.deleteProject(params.id, owner);
+      const deletedProject = await actions.deleteProject(params.id);
 
       if (!deletedProject) {
         return { status: 404, body: { message: 'Project not found' } };
@@ -166,42 +135,40 @@ export const routerProjects = s.router(contract.projects, {
       return { status: 200, body: { message: 'Project removed' } };
     },
   },
-  startProject: {
+  activate: {
     middleware: [auth('bearerJWT')],
     handler: async ({ params, req: { currentUser } }) => {
-      if (!currentUser) {
+      if (!currentUser || currentUser.role !== 'admin') {
         return { status: 401, body: { message: 'Unauthorized' } };
       }
 
-      const owner = currentUser.role === 'admin' ? undefined : currentUser.id;
-      const project = await actions.startJob(params.id, owner);
+      const project = await actions.activateProject(params.id);
 
       if (!project) {
         return { status: 404, body: { message: 'Project not found' } };
       }
 
-      log.warn(`Project ${project._id} started`);
+      log.warn(`Project ${project.id} activated`);
 
-      return { status: 200, body: { message: 'Project started' } };
+      return { status: 200, body: { message: 'Project activated' } };
     },
   },
-  stopProject: {
+  deactivate: {
     middleware: [auth('bearerJWT')],
     handler: async ({ params, req: { currentUser } }) => {
-      if (!currentUser) {
+      if (!currentUser || currentUser.role !== 'admin') {
         return { status: 401, body: { message: 'Unauthorized' } };
       }
 
-      const owner = currentUser.role === 'admin' ? undefined : currentUser.id;
-      const project = await actions.stopJob(params.id, owner);
+      const project = await actions.deactivateProject(params.id);
 
       if (!project) {
         return { status: 404, body: { message: 'Project not found' } };
       }
 
-      log.warn(`Project ${project._id} stopped`);
+      log.warn(`Project ${project.id} deactivated`);
 
-      return { status: 200, body: { message: 'Project stopped' } };
+      return { status: 200, body: { message: 'Project deactivated' } };
     },
   },
 });

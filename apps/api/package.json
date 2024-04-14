@@ -9,44 +9,53 @@
   "author": "Luciano Frizzera <lucaju@gmail.com> (luciano.fluxo.art.br)",
   "license": "MIT",
   "type": "module",
-  "main": "index.js",
+  "exports": {
+    "./dist": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./types": {
+      "types": "./types/index.ts"
+    }
+  },
+  "main": "transpiled/server/index.js",
   "engines": {
     "node": ">=20"
   },
   "scripts": {
-    "build": "tsup db/index.ts jobs/index.ts server/index.ts --format esm,cjs --dts",
-    "dev": "npm run build -- --watch --onSuccess \"node --watch dist/server/index.js\"",
+    "build-contract": "tsup --config tsup-contract.config.ts",
+    "build": "tsup",
+    "dev": "npm run build -- --watch --onSuccess \"node --watch transpiled/server/index.js\"",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "lint": "eslint .",
-    "start": "node dist/server/index.js",
-    "gendoc": "tsup swagger.ts --format esm,cjs --dts --onSuccess \"node --watch dist/swagger.js\""
+    "start": "node transpiled/server/index.js"
   },
   "dependencies": {
-    "@ts-rest/core": "^3.33.0",
-    "@ts-rest/express": "^3.33.0",
-    "@ts-rest/open-api": "^3.33.0",
+    "@ts-rest/core": "^3.43.0",
+    "@ts-rest/express": "^3.43.0",
+    "@ts-rest/open-api": "^3.43.0",
     "@whisthub/agenda": "^7.0.2",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
-    "date-fns": "^3.3.1",
-    "date-fns-tz": "^2.0.0",
+    "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
-    "express": "^4.18.3",
+    "express": "^4.19.2",
     "express-session": "^1.18.0",
-    "fs-extra": "^11.2.0",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "kleur": "^4.1.5",
     "loglevel": "^1.9.1",
     "memorystore": "^1.6.7",
-    "mongoose": "^8.2.1",
+    "mongoose": "^8.3.1",
     "morgan": "^1.10.0",
-    "nodemailer": "^6.9.11",
-    "socket.io": "^4.7.4",
+    "nanoid": "^5.0.7",
+    "nodemailer": "^6.9.13",
+    "socket.io": "^4.7.5",
     "swagger-ui-express": "^5.0.0",
-    "winston": "^3.12.0",
+    "winston": "^3.13.0",
     "youtube-recommendation-crawler": "*",
     "zod": "^3.22.4"
   },
@@ -56,16 +65,15 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/express-session": "^1.18.0",
-    "@types/fs-extra": "^11.0.4",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/morgan": "^1.9.9",
-    "@types/node": "^20.11.24",
+    "@types/node": "^20.12.7",
     "@types/nodemailer": "^6.4.14",
     "@types/swagger-ui-express": "^4.1.6",
     "eslint": "^8.57.0",
     "eslint-config-custom": "*",
     "tsconfig": "*",
     "tsup": "^8.0.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.5"
   }
 }

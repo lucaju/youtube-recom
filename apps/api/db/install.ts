@@ -1,6 +1,6 @@
-import kleur from 'kleur';
 import { log } from '@/util/log';
-import { UserDbModel } from './schemas';
+import kleur from 'kleur';
+import { UserDbModel } from './users/models';
 
 export const install = async () => {
   log.info(kleur.yellow('Initial Setup'));
@@ -16,7 +16,8 @@ export const install = async () => {
     password: process.env.ADMIN_PWD,
   });
 
-  await user.save().catch((error) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await user.save().catch((error: any) => {
     throw new Error(`Installation Failed. MongoDB faild to create admin user: ${error}`);
   });
 

@@ -1,4 +1,4 @@
-import { userSchema } from '@/db/schemas';
+import { userSchema } from '@/types/user';
 import { initContract } from '@ts-rest/core';
 import { z } from 'zod';
 
@@ -32,34 +32,20 @@ export const contractUsers = c.router(
       },
       summary: 'Logout user',
     },
-    logoutAll: {
-      method: 'GET',
-      path: `/logout/all`,
-      headers: z.object({
-        authorization: z.string(),
-      }),
-      responses: {
-        200: c.type<{ message?: string }>(),
-        401: c.type<{ message: string }>(),
-        404: c.type<{ message: string }>(),
-        500: c.type<{ message: string }>(),
-      },
-      summary: 'Logout user from all devices',
-    },
-    users: {
+    getAll: {
       method: 'GET',
       path: `/`,
       headers: z.object({
         authorization: z.string(),
       }),
       responses: {
-        200: z.array(userSchema),
+        200: userSchema.array(),
         401: c.type<{ message: string }>(),
         500: c.type<{ message: string }>(),
       },
       summary: 'Get users',
     },
-    user: {
+    get: {
       method: 'GET',
       path: `/:id`,
       headers: z.object({
@@ -76,22 +62,22 @@ export const contractUsers = c.router(
       },
       summary: 'Get user',
     },
-    createUser: {
+    create: {
       method: 'POST',
       path: `/`,
       headers: z.object({
         authorization: z.string(),
       }),
-      body: userSchema.omit({ id: true }),
+      body: userSchema.omit({ id: true, createdAt: true, updatedAt: true }).strict(),
       responses: {
         201: userSchema,
         401: c.type<{ message: string }>(),
-        407: c.type<{ message: string }>(),
+        409: c.type<{ message: string }>(),
         500: c.type<{ message: string }>(),
       },
       summary: 'Create user',
     },
-    updateUser: {
+    update: {
       method: 'PATCH',
       path: `/:id`,
       headers: z.object({
@@ -110,7 +96,7 @@ export const contractUsers = c.router(
       },
       summary: 'Update user',
     },
-    deleteUser: {
+    delete: {
       method: 'DELETE',
       path: `/:id`,
       headers: z.object({
@@ -122,8 +108,8 @@ export const contractUsers = c.router(
       body: z.object({}),
       responses: {
         200: c.type<{ message: string }>(),
-        400: c.type<{ message: string }>(),
         401: c.type<{ message: string }>(),
+        404: c.type<{ message: string }>(),
         500: c.type<{ message: string }>(),
       },
       summary: 'Update user',

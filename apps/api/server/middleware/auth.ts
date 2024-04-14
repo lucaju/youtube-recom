@@ -1,8 +1,8 @@
-import { UserDbModel } from '@/db/schemas/users';
+import { UserDbModel } from '@/db/users/models';
+import { log } from '@/util/log';
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { logger } from '../logger';
-import { log } from '@/util/log';
 
 export const auth =
   (strategy?: string) => async (req: Request, _res: Response, next: NextFunction) => {
@@ -66,7 +66,7 @@ export const bearerJWT = async (token: string) => {
       return;
     }
 
-    const currentUser = await UserDbModel.findOne({ _id: decoded._id, tokens: token });
+    const currentUser = await UserDbModel.findOne({ _id: decoded._id as string, tokens: token });
     if (!currentUser) return;
 
     return currentUser;

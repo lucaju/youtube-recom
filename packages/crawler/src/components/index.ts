@@ -1,2 +1,2 @@
-export * from './browser';
-export * from './eventEmitter';
+export * from './browser.ts';
+export * from './eventEmitter.ts';

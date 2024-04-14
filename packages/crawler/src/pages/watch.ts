@@ -1,8 +1,8 @@
 import { ElementHandle, Page } from 'puppeteer';
-import { getBrowser } from '../components';
-import { config } from '../config';
-import { log } from '../util/log';
-import type { AdCompanion, Video, VideoBase } from '../types';
+import { getBrowser } from '../components/index.ts';
+import { config } from '../config.ts';
+import { log } from '../util/log.ts';
+import type { AdCompanion, Video, VideoBase } from '../types/index.ts';
 
 export const watchPage = async (id: string) => {
   const browser = await getBrowser();
@@ -91,10 +91,7 @@ const getMetadata = async (page: Page) => {
       duration,
       uploadDate: new Date(uploadDate),
       datePublished: new Date(datePublished),
-      channel: {
-        id: channelId,
-        name: channelName,
-      },
+      channel: { id: channelId, name: channelName },
       paid,
     };
 
@@ -134,19 +131,13 @@ const getMetaFromHtml = async (page: Page) => {
       title,
       description,
       uploadDate: uploadDate ? new Date() : undefined,
-      channel:
-        channelName && channelId
-          ? {
-              id: channelId,
-              name: channelName,
-            }
-          : undefined,
+      channel: channelName && channelId ? { id: channelId, name: channelName } : undefined,
     };
 
     return videoDetails;
   } catch (error) {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    log.error(`!! ERROR: getMetaFromHtml: ${error}`);
+    log.debug(`!! ERROR: getMetaFromHtml: ${error}`);
     return;
   }
 };
@@ -211,7 +202,7 @@ const getStats = async (page: Page) => {
     return videoDetails;
   } catch (error) {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    log.error(`!! ERROR: getStats: ${error}`);
+    log.debug(`!! ERROR: getStats: ${error}`);
     return;
   }
 };
@@ -236,7 +227,7 @@ const getAdCompanion = async (page: Page) => {
     return adCompanion;
   } catch (error) {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    log.error(`!! ERROR: getAdCompanion: ${error}`);
+    log.debug(`!! ERROR: getAdCompanion: ${error}`);
     return;
   }
 };

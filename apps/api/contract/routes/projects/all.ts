@@ -1,4 +1,4 @@
-import { projectSchema } from '@/db/schemas';
+import { projectSchema } from '@/types/project';
 import { initContract } from '@ts-rest/core';
 import { z } from 'zod';
 
@@ -6,15 +6,15 @@ const c = initContract();
 
 export const contractProjectAll = c.router(
   {
-    projectsAll: {
+    get: {
       method: 'GET',
       path: `/`,
       headers: z.object({
         authorization: z.string(),
       }),
       query: z.object({
-        owner: projectSchema.shape.owner.optional(),
-        active: z.literal('true').or(z.literal('false')).optional(),
+        owner: projectSchema.shape.ownerId.optional(),
+        status: projectSchema.shape.status.optional(),
         ephemeral: z.literal('true').or(z.literal('false')).optional(),
       }),
       responses: {
@@ -24,7 +24,7 @@ export const contractProjectAll = c.router(
       },
       summary: 'Get all projects. Admin only.',
     },
-    projectsStop: {
+    deactivate: {
       method: 'PATCH',
       path: '/stop',
       headers: z.object({
@@ -37,7 +37,7 @@ export const contractProjectAll = c.router(
         401: c.type<{ message: string }>(),
         500: c.type<{ message: string }>(),
       },
-      summary: 'Stop projects',
+      summary: 'Deactivate projects',
     },
   },
   {

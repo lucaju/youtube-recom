@@ -1,6 +1,6 @@
 import kleur from 'kleur';
 import puppeteer, { type Browser } from 'puppeteer';
-import { log } from '../util/log';
+import { log } from '../util/log.ts';
 
 interface BrowserConfig {
   headless?: boolean;

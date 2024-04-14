@@ -15,6 +15,7 @@ export class TypedEventEmitter<TEvents extends Record<string, any>> {
     eventName: TEventName,
     handler: (...eventArg: TEvents[TEventName]) => void,
   ) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     this.emitter.on(eventName, handler as any);
   }
 
@@ -22,6 +23,7 @@ export class TypedEventEmitter<TEvents extends Record<string, any>> {
     eventName: TEventName,
     handler: (...eventArg: TEvents[TEventName]) => void,
   ) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     this.emitter.off(eventName, handler as any);
   }
 

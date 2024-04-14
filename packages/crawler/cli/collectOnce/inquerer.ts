@@ -1,8 +1,8 @@
 import { checkbox, input, select } from '@inquirer/prompts';
 import kleur from 'kleur';
 import { LogLevelDesc } from 'loglevel';
-import type { Config } from '.';
-import { crawlerConfig } from '../../src';
+import type { Config } from './index.ts';
+import { crawlerConfig } from '../../src/index.ts';
 
 export const Inquerer = async () => {
   const result = {

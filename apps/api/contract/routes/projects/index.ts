@@ -1,33 +1,63 @@
-import { projectSchema, type Project } from '@/db/schemas';
-import { projectScheduleSchema } from '@/db/schemas/projects/schedule';
+import { projectScheduleSchema, projectSchema } from '@/types/project';
 import { initContract } from '@ts-rest/core';
 import { z } from 'zod';
 import { contractProjectAll } from './all';
-import { crawlerResultSchema } from 'youtube-recommendation-crawler';
+import { contractProjectsJobs } from './jobs';
+import { contractProjectsResults } from './results';
 
 const c = initContract();
 
 export const contractProjects = c.router(
   {
     all: contractProjectAll,
-    projects: {
+    results: contractProjectsResults,
+    jobs: contractProjectsJobs,
+    getAll: {
       method: 'GET',
       path: `/`,
       headers: z.object({
         authorization: z.string(),
       }),
       query: z.object({
-        active: z.literal('true').or(z.literal('false')).optional(),
+        owner: projectSchema.shape.ownerId.optional(),
+        status: projectSchema.shape.status.optional(),
         ephemeral: z.literal('true').or(z.literal('false')).optional(),
       }),
       responses: {
-        200: c.type<Project[]>(),
+        200: projectSchema.array(),
         401: c.type<{ message: string }>(),
         500: c.type<{ message: string }>(),
       },
       summary: 'Get projects',
     },
-    project: {
+    create: {
+      method: 'POST',
+      path: `/`,
+      headers: z.object({
+        authorization: z.string(),
+      }),
+      body: projectSchema
+        .pick({
+          title: true,
+          description: true,
+          keywords: true,
+          crawlerConfig: true,
+          preferences: true,
+        })
+        .extend({
+          schedule: projectScheduleSchema
+            .pick({ frequency: true, time: true, timezone: true })
+            .optional(),
+        }),
+      responses: {
+        201: projectSchema,
+        400: c.type<{ message: string }>(),
+        401: c.type<{ message: string }>(),
+        500: c.type<{ message: string }>(),
+      },
+      summary: 'Create a project',
+    },
+    get: {
       method: 'GET',
       path: `/:id`,
       headers: z.object({
@@ -43,54 +73,14 @@ export const contractProjects = c.router(
       },
       summary: 'Get a project',
     },
-    projectResults: {
-      method: 'GET',
-      path: `/:id/results`,
-      headers: z.object({
-        authorization: z.string(),
-      }),
-      pathParams: projectSchema.pick({ id: true }),
-      responses: {
-        200: z.union([z.object({ message: z.string() }), z.array(crawlerResultSchema)]),
-        401: c.type<{ message: string }>(),
-        404: c.type<{ message: string }>(),
-        500: c.type<{ message: string }>(),
-      },
-      summary: 'Get a project results',
-    },
-    createProject: {
-      method: 'POST',
-      path: `/`,
-      headers: z.object({
-        authorization: z.string(),
-      }),
-      body: projectSchema
-        .pick({
-          title: true,
-          keywords: true,
-          crawlerConfig: true,
-        })
-        .extend({
-          schedule: projectScheduleSchema
-            .pick({ frequency: true, time: true, timezone: true, preference: true })
-            .optional(),
-        }),
-      responses: {
-        201: projectSchema,
-        400: c.type<{ message: string }>(),
-        401: c.type<{ message: string }>(),
-        500: c.type<{ message: string }>(),
-      },
-      summary: 'Create a project',
-    },
-    updateProject: {
+    update: {
       method: 'PUT',
       path: `/:id`,
       headers: z.object({
         authorization: z.string(),
       }),
       pathParams: projectSchema.pick({ id: true }),
-      body: projectSchema.pick({ title: true }),
+      body: projectSchema.partial(),
       responses: {
         200: projectSchema,
         400: c.type<{ message: string }>(),
@@ -100,9 +90,9 @@ export const contractProjects = c.router(
       },
       summary: 'Update a project',
     },
-    startProject: {
+    activate: {
       method: 'PATCH',
-      path: `/:id/start`,
+      path: `/:id/activate`,
       headers: z.object({
         authorization: z.string(),
       }),
@@ -116,9 +106,9 @@ export const contractProjects = c.router(
       },
       summary: 'Start a project',
     },
-    stopProject: {
+    deactivate: {
       method: 'PATCH',
-      path: '/:id/stop',
+      path: '/:id/deactivate',
       headers: z.object({
         authorization: z.string(),
       }),
@@ -132,7 +122,7 @@ export const contractProjects = c.router(
       },
       summary: 'Stop a project',
     },
-    deleteProject: {
+    delete: {
       method: 'DELETE',
       path: `/:id`,
       headers: z.object({
@@ -143,6 +133,7 @@ export const contractProjects = c.router(
       responses: {
         200: c.type<{ message: string }>(),
         401: c.type<{ message: string }>(),
+        404: c.type<{ message: string }>(),
         500: c.type<{ message: string }>(),
       },
       summary: 'Delete project',

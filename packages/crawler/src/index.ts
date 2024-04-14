@@ -1,2 +1,2 @@
-export * from './crawler';
-export * from './scraper';
+export * from './crawler.ts';
+export * from './scraper.ts';

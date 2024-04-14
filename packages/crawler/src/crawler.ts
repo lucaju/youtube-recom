@@ -1,9 +1,9 @@
 import kleur from 'kleur';
 import * as emoji from 'node-emoji';
 import ora, { type Ora } from 'ora';
-import { TypedEventEmitter, disposeBrowser, getBrowser } from './components';
-import { config } from './config';
-import { searchPage, watchPage } from './pages';
+import { TypedEventEmitter, disposeBrowser, getBrowser } from './components/index.ts';
+import { config } from './config.ts';
+import { searchPage, watchPage } from './pages/index.ts';
 import type {
   CrawlerConfig,
   CrawlerOptions,
@@ -11,11 +11,11 @@ import type {
   Delay,
   Video,
   VideoBase,
-} from './types';
-import { log } from './util/log';
+} from './types/index.ts';
+import { log } from './util/log.ts';
 
-export { config as crawlerConfig } from './config';
-export * from './types';
+export { config as crawlerConfig } from './config.ts';
+export * from './types/index.ts';
 
 interface LocalEventTypes {
   start: [{ message: string }];

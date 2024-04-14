@@ -1,6 +1,6 @@
 import { connectAgenda } from '@/scheduler';
 import { install } from './install';
-import { UserDbModel } from './schemas';
+import { UserDbModel } from './users/models';
 
 export const initialize = async () => {
   const ready = await checkUserAdmin();

@@ -11,42 +11,50 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/src/index.js",
-      "require": "./dist/src/index.cjs",
-      "types": "./dist/src/index.d.ts"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./schema": {
+      "import": "./schema/index.js",
+      "require": "./schema/index.cjs",
+      "types": "./schema/index.d.ts"
     }
   },
-  "main": "./dist/src/index.cjs",
-  "module": "./dist/src/index.js",
-  "types": "./dist/src/index.d.ts",
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
   "engines": {
     "node": ">=20"
   },
   "scripts": {
-    "build": "npm run clean && tsup src/index.ts cli/collectOnce/index.ts cli/collectOne/index.ts --format esm,cjs --dts",
+    "build": "npm run clean && tsup",
+    "build-schema": "tsup --config tsup-schema.config.ts",
+    "build-cli": "tsup --config tsup-cli.config.ts",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "npm run build -- --watch",
-    "collect-one": "node dist/cli/collectOne/index.js",
-    "collect-once": "node dist/cli/collectOnce/index.js",
+    "collect-one": "node dist-cli/collectOne/index.js",
+    "collect-once": "node dist-cli/collectOnce/index.js",
     "lint": "eslint ."
   },
   "dependencies": {
-    "@inquirer/prompts": "^4.1.0",
+    "@inquirer/prompts": "^5.0.0",
+    "@types/fs-extra": "^11.0.4",
+    "fs-extra": "^11.2.0",
     "kleur": "^4.1.5",
     "loglevel": "^1.9.1",
     "node-emoji": "^2.1.3",
     "ora": "7.0.1",
-    "puppeteer": "^22.4.0",
+    "puppeteer": "^22.6.4",
     "yargs": "^17.7.2",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@types/node": "^20.11.24",
+    "@types/node": "^20.12.7",
     "@types/yargs": "^17.0.32",
     "eslint": "^8.57.0",
     "eslint-config-custom": "*",
     "tsconfig": "*",
     "tsup": "^8.0.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.5"
   }
 }

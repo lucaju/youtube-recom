@@ -1,5 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local"],
   "globalEnv": [
     "NODE_ENV",
     "PORT",
@@ -11,7 +12,8 @@
     "ADMIN_NAME",
     "ADMIN_PWD",
     "GMAIL_APP_SPECIFIC_PWD",
-    "DISCORD_WEBHOOK_URL"
+    "DISCORD_WEBHOOK_URL",
+    "NEXT_PUBLIC_AUTH_API_URL"
   ],
   "pipeline": {
     "clean": {

@@ -1,8 +1,9 @@
 import { contract } from '@/contract';
-import { UserDbModel, type User } from '@/db/schemas/users';
+import { UserDbModel } from '@/db/users/models';
 import { logger } from '@/server/logger';
 import { auth } from '@/server/middleware/auth';
 import { emitIo } from '@/server/socket';
+import type { User } from '@/types';
 import { initServer } from '@ts-rest/express';
 
 const s = initServer();
@@ -12,7 +13,7 @@ export const routerUsers = s.router(contract.users, {
     middleware: [auth('basic')],
     handler: async ({ req: { currentUser, token } }) => {
       if (!token || !currentUser) {
-        return { status: 404, body: { message: 'Unable to login' } };
+        return { status: 404, body: { message: 'Email or password is incorrect' } };
       }
 
       emitIo('userEvent', { msg: 'login' });
@@ -27,7 +28,7 @@ export const routerUsers = s.router(contract.users, {
         return { status: 401, body: { message: 'Please Authenticate' } };
       }
 
-      currentUser.tokens = currentUser.tokens?.filter((tokn: string) => tokn !== token);
+      currentUser.tokens = [];
       await currentUser.save();
 
       emitIo('userEvent', { message: 'logout' });
@@ -35,33 +36,18 @@ export const routerUsers = s.router(contract.users, {
       return { status: 200, body: { message: 'logout' } };
     },
   },
-  logoutAll: {
-    middleware: [auth('bearerJWT')],
-    handler: async ({ req: { currentUser, token } }) => {
-      if (!token || !currentUser) {
-        return { status: 401, body: { message: 'Please Authenticate' } };
-      }
-
-      currentUser.tokens = [];
-      await currentUser.save();
-
-      emitIo('userEvent', { message: 'logout all' });
-
-      return { status: 200, body: { message: 'logout' } };
-    },
-  },
-  users: {
+  getAll: {
     middleware: [auth('bearerJWT')],
     handler: async ({ req: { currentUser } }) => {
       if (currentUser?.role !== 'admin') {
         return { status: 401, body: { message: 'Unauthorized' } };
       }
 
-      const users = await UserDbModel.find();
+      const users = await UserDbModel.find().sort({ name: 1, email: 1, role: 1, createdAt: 1 });
       return { status: 200, body: users };
     },
   },
-  user: {
+  get: {
     middleware: [auth('bearerJWT')],
     handler: async ({ params, req: { currentUser } }) => {
       if (!currentUser) {
@@ -88,7 +74,7 @@ export const routerUsers = s.router(contract.users, {
       return { status: 200, body: user };
     },
   },
-  createUser: {
+  create: {
     middleware: [auth('bearerJWT')],
     handler: async ({ req: { currentUser }, body }) => {
       if (currentUser?.role !== 'admin') {
@@ -96,7 +82,7 @@ export const routerUsers = s.router(contract.users, {
       }
 
       const userModel = new UserDbModel(body);
-      const user = await userModel.save().catch((err) => {
+      const user = await userModel.save().catch((err: unknown) => {
         logger.error(err);
         return null;
       });
@@ -108,10 +94,14 @@ export const routerUsers = s.router(contract.users, {
       return { status: 201, body: user };
     },
   },
-  updateUser: {
+  update: {
     middleware: [auth('bearerJWT')],
     handler: async ({ params, req: { currentUser, token }, body }) => {
-      if (params.id !== 'me' || currentUser?.id !== params.id) {
+      if (!currentUser) {
+        return { status: 401, body: { message: 'Unauthorized' } };
+      }
+
+      if (params.id !== 'me' && currentUser.id !== params.id) {
         if (currentUser?.role !== 'admin') {
           return { status: 401, body: { message: 'Unauthorized' } };
         }
@@ -129,6 +119,7 @@ export const routerUsers = s.router(contract.users, {
       }
 
       const allowedUpdates = ['name', 'password'];
+      if (currentUser.role === 'admin') allowedUpdates.push('role');
       const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
 
       if (!isValidOperation) {
@@ -149,7 +140,7 @@ export const routerUsers = s.router(contract.users, {
       return { status: 200, body: user };
     },
   },
-  deleteUser: {
+  delete: {
     middleware: [auth('bearerJWT')],
     handler: async ({ params, req: { currentUser } }) => {
       if (params.id !== 'me' || currentUser?.id !== params.id) {
@@ -163,7 +154,7 @@ export const routerUsers = s.router(contract.users, {
         return { status: 404, body: { message: 'User not found' } };
       }
 
-      await UserDbModel.findOneAndDelete({ _id: userToDelete.id });
+      await UserDbModel.findOneAndDelete({ id: userToDelete.id });
       return { status: 200, body: { message: 'User deleted.' } };
     },
   },

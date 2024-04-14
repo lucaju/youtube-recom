@@ -1,2 +1,2 @@
-export * from './search';
-export * from './watch';
+export * from './search.ts';
+export * from './watch.ts';

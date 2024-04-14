@@ -1,48 +1,58 @@
 module.exports = {
-  extends: ['eslint:recommended', 'turbo', 'prettier'],
-  env: { es6: true },
-  ignorePatterns: ['**/coverage/**/*.*', '**/dist/**/*.*', '**/packages/eslint-*/*.js'],
+  extends: [
+    'next/core-web-vitals',
+    'turbo',
+    //* For more relaxed TS rules, uncommend next 2 lines and comment the following 2.
+    'plugin:@typescript-eslint/recommended',
+    // 'plugin:@typescript-eslint/stylistic',
+    // 'plugin:@typescript-eslint/recommended-type-checked',
+    // 'plugin:@typescript-eslint/stylistic-type-checked',
+    'prettier',
+  ],
+  settings: {
+    react: { version: 'detect' },
+  },
+  ignorePatterns: [
+    '**/coverage/**/*.*',
+    '**/dist/**/*.*',
+    '**/packages/eslint-*/*.js',
+    '**/*.cjs',
+    '**/*.js',
+    '**/*.cts',
+    '**/*.mts',
+    '**/*.d.ts',
+  ],
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
+    project: ['./tsconfig.json'],
+  },
+  plugins: ['@typescript-eslint'],
+  rules: {
+    '@next/next/no-html-link-for-pages': 'off',
+    '@typescript-eslint/ban-ts-comment': 1,
+    '@typescript-eslint/no-explicit-any': 1,
+    '@typescript-eslint/require-await': 0,
   },
   overrides: [
+    {
+      files: ['**/*.js'],
+      extends: ['next/core-web-vitals', 'prettier'],
+    },
     {
       env: { node: true },
       files: ['**/.eslintrc.{js,cjs}', '**/.jest-preset.js'],
       parserOptions: { sourceType: 'script' },
     },
     {
-      env: { node: true },
-      files: ['**/*.ts'],
-      extends: [
-        'eslint:recommended',
-        //* For more relaxed TS rules, uncommend next 2 lines and comment the following 2.
-        'plugin:@typescript-eslint/recommended',
-        'plugin:@typescript-eslint/stylistic',
-        // 'plugin:@typescript-eslint/recommended-type-checked',
-        // 'plugin:@typescript-eslint/stylistic-type-checked',
-        'prettier',
-      ],
-      parser: '@typescript-eslint/parser',
-      parserOptions: {
-        ecmaVersion: 'latest',
-        sourceType: 'module',
-        project: ['./tsconfig.json'],
-      },
-      plugins: ['@typescript-eslint', 'prettier'],
-      rules: {
-        // '@typescript-eslint/no-unsafe-member-access': 1,
-        '@typescript-eslint/ban-ts-comment': 1,
-        '@typescript-eslint/no-explicit-any': 1,
-        '@typescript-eslint/require-await': 0,
-      },
-    },
-    {
       files: ['**/*.md'],
       processor: 'markdown/markdown',
       plugins: ['markdown'],
-      extends: ['eslint:recommended', 'plugin:markdown/recommended', 'prettier'],
+      extends: [
+        'eslint:recommended',
+        // 'plugin:markdown/recommended',
+        'prettier',
+      ],
     },
     {
       files: ['**/*.md/*.ts'],

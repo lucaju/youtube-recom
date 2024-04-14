@@ -17,6 +17,7 @@ export const connectAgenda = async () => {
     defaultConcurrency: 1,
     maxConcurrency: 1,
     defaultLockLifetime: minutesToMilliseconds(60), // in milliseconds
+    lockLimit: 1,
   });
 
   //define jobs

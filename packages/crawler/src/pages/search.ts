@@ -1,9 +1,9 @@
 import kleur from 'kleur';
 import type { Browser, ElementHandle } from 'puppeteer';
-import { getBrowser } from '../components';
-import { config } from '../config';
-import { log } from '../util/log';
-import type { CrawlerConfig, VideoBase } from '../types';
+import { getBrowser } from '../components/index.ts';
+import { config } from '../config.ts';
+import { log } from '../util/log.ts';
+import type { CrawlerConfig, VideoBase } from '../types/index.ts';
 
 type SortType = 'top_rated' | 'view_count' | 'Sorting search results by relevance';
 
