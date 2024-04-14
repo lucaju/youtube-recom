@@ -14,7 +14,7 @@ import { useProject } from '../../../hooks/useProject';
 import { DataTable } from '../datatable';
 import { columns } from '../datatable/columns';
 
-type ResultSummary = ClientInferResponses<typeof contract.projects.projectResults, 200>;
+type ResultSummary = ClientInferResponses<typeof contract.projects.results.getAll, 200>;
 
 const MAX_VIDEOS = 5;
 
