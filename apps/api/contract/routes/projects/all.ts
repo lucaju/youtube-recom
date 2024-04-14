@@ -26,7 +26,7 @@ export const contractProjectAll = c.router(
     },
     deactivate: {
       method: 'PATCH',
-      path: '/stop',
+      path: '/deactivate',
       headers: z.object({
         authorization: z.string(),
       }),
