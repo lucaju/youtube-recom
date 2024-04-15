@@ -21,6 +21,9 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
+          # Secrets
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          NEXT_PUBLIC_AUTH_SECRET: ${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
           # list of Docker images to use as base name for tags
           # assumes image named after owner/repository
           images: |
