@@ -11,6 +11,10 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+env:
+  AUTH_SECRET: 06a3a1f84bc6ea0c9efadbf4a088e8aae387fc8ec23fdd8ef31e61f47b5f0fe8
+  NEXT_PUBLIC_AUTH_SECRET: 06a3a1f84bc6ea0c9efadbf4a088e8aae387fc8ec23fdd8ef31e61f47b5f0fe8
+
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -46,10 +50,6 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push
         uses: docker/build-push-action@v3
-        env:
-          # Secrets
-          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-          NEXT_PUBLIC_AUTH_SECRET: ${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
