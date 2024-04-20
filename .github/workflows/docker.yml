@@ -50,21 +50,12 @@ jobs:
         with:
           # build-args: AUTH_SECRET=${{ secrets.AUTH_SECRET }}, NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
           build-args: |
-            TEST_ENV=test
-            REGISTRY={{ env.REGISTRY }}
-            DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
             AUTH_SECRET=${{ env.AUTH_SECRET }}
             NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
           secret-envs: |
-            TEST_ENV=test
-            REGISTRY={{ env.REGISTRY }}
-            DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
             AUTH_SECRET=${{ env.AUTH_SECRET }}
             NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
           secrets: |
-            TEST_ENV=test
-            REGISTRY={{ env.REGISTRY }}
-            DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
             AUTH_SECRET=${{ env.AUTH_SECRET }}
             NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
           context: .
