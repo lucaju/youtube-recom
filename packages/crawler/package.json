@@ -37,12 +37,12 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@inquirer/prompts": "^5.0.0",
+    "@inquirer/prompts": "^5.0.1",
     "kleur": "^4.1.5",
     "loglevel": "^1.9.1",
     "node-emoji": "^2.1.3",
     "ora": "7.0.1",
-    "puppeteer": "^22.6.4",
+    "puppeteer": "^22.6.5",
     "yargs": "^17.7.2",
     "zod": "^3.22.4"
   },

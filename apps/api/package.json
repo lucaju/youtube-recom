@@ -32,9 +32,9 @@
     "start": "node transpiled/server/index.js"
   },
   "dependencies": {
-    "@ts-rest/core": "^3.43.0",
-    "@ts-rest/express": "^3.43.0",
-    "@ts-rest/open-api": "^3.43.0",
+    "@ts-rest/core": "^3.44.1",
+    "@ts-rest/express": "^3.44.1",
+    "@ts-rest/open-api": "^3.44.1",
     "@whisthub/agenda": "^7.0.2",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
@@ -49,7 +49,7 @@
     "kleur": "^4.1.5",
     "loglevel": "^1.9.1",
     "memorystore": "^1.6.7",
-    "mongoose": "^8.3.1",
+    "mongoose": "^8.3.2",
     "morgan": "^1.10.0",
     "nanoid": "^5.0.7",
     "nodemailer": "^6.9.13",
@@ -57,7 +57,7 @@
     "swagger-ui-express": "^5.0.0",
     "winston": "^3.13.0",
     "youtube-recommendation-crawler": "*",
-    "zod": "^3.22.4"
+    "zod": "^3.22.5"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
