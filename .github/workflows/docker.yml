@@ -15,11 +15,11 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
 
 # There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
 jobs:
   build-and-push-image:
+    environment: production
     runs-on: ubuntu-latest
     # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
     permissions:
@@ -48,17 +48,12 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          # build-args: AUTH_SECRET=${{ secrets.AUTH_SECRET }}, NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
-          # build-args: |
-            # AUTH_SECRET=${{ secrets.AUTH_SECRET }}
-          # NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
-          secret-envs: |
+          build-args: |
             AUTH_SECRET=${{ secrets.AUTH_SECRET }}
+          secret-envs: |
             NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
-            
-          # secrets: |
-          #   AUTH_SECRET=${{ secrets.AUTH_SECRET }}
-          #   NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
+            AUTH_TRUST_HOST=${{ vars.AUTH_TRUST_HOST }}
+            NEXT_PUBLIC_SERVER_API_URL=${{ vars.NEXT_PUBLIC_SERVER_API_URL }}
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
