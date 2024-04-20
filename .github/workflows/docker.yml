@@ -15,6 +15,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
 
 # There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
 jobs:
@@ -49,15 +50,26 @@ jobs:
         with:
           # build-args: AUTH_SECRET=${{ secrets.AUTH_SECRET }}, NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
           build-args: |
-            AUTH_SECRET=t-ba
-            NEXT_PUBLIC_AUTH_SECRET=try
-          # secret-envs: AUTH_SECRET=${{ secrets.AUTH_SECRET }}, NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
+            TEST_ENV="test"
+            TEST_ENV2=test
+            REGISTRY={{ env.REGISTRY }}
+            DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+            AUTH_SECRET=${{ env.AUTH_SECRET }}
+            NEXT_PUBLIC_AUTH_SECRET=${{ secret.NEXT_PUBLIC_AUTH_SECRET }}
           secret-envs: |
-            AUTH_SECRET=tse
-            NEXT_PUBLIC_AUTH_SECRET=bb
+            TEST_ENV="test"
+            TEST_ENV2=test
+            REGISTRY={{ env.REGISTRY }}
+            DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+            AUTH_SECRET=${{ env.AUTH_SECRET }}
+            NEXT_PUBLIC_AUTH_SECRET=${{ secret.NEXT_PUBLIC_AUTH_SECRET }}
           secret: |
-            AUTH_SECRET=ts
-            NEXT_PUBLIC_AUTH_SECRET=bbt
+            TEST_ENV="test"
+            TEST_ENV2=test
+            REGISTRY={{ env.REGISTRY }}
+            DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+            AUTH_SECRET=${{ env.AUTH_SECRET }}
+            NEXT_PUBLIC_AUTH_SECRET=${{ secret.NEXT_PUBLIC_AUTH_SECRET }}
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
