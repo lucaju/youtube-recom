@@ -47,8 +47,10 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          build-args: AUTH_SECRET=${{ secrets.AUTH_SECRET }}, NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
-          secret-envs: AUTH_SECRET=${{ secrets.AUTH_SECRET }}, NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
+          # build-args: AUTH_SECRET=${{ secrets.AUTH_SECRET }}, NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
+          build-args: AUTH_SECRET=test, NEXT_PUBLIC_AUTH_SECRET=try
+          # secret-envs: AUTH_SECRET=${{ secrets.AUTH_SECRET }}, NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
+          secret-envs: AUTH_SECRET=tt, NEXT_PUBLIC_AUTH_SECRET=bb
           context: .
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
