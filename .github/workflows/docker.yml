@@ -49,12 +49,12 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           # build-args: AUTH_SECRET=${{ secrets.AUTH_SECRET }}, NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
-          build-args: |
-            AUTH_SECRET=${{ secrets.AUTH_SECRET }}
+          # build-args: |
+            # AUTH_SECRET=${{ secrets.AUTH_SECRET }}
           # NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
           secret-envs: |
+            AUTH_SECRET=${{ secrets.AUTH_SECRET }}
             NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
-          # AUTH_SECRET=${{ secrets.AUTH_SECRET }}
             
           # secrets: |
           #   AUTH_SECRET=${{ secrets.AUTH_SECRET }}
