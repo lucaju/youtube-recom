@@ -55,21 +55,21 @@ jobs:
             REGISTRY={{ env.REGISTRY }}
             DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
             AUTH_SECRET=${{ env.AUTH_SECRET }}
-            NEXT_PUBLIC_AUTH_SECRET=${{ secret.NEXT_PUBLIC_AUTH_SECRET }}
+            NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
           secret-envs: |
             TEST_ENV="test"
             TEST_ENV2=test
             REGISTRY={{ env.REGISTRY }}
             DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
             AUTH_SECRET=${{ env.AUTH_SECRET }}
-            NEXT_PUBLIC_AUTH_SECRET=${{ secret.NEXT_PUBLIC_AUTH_SECRET }}
+            NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
           secret: |
             TEST_ENV="test"
             TEST_ENV2=test
             REGISTRY={{ env.REGISTRY }}
             DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
             AUTH_SECRET=${{ env.AUTH_SECRET }}
-            NEXT_PUBLIC_AUTH_SECRET=${{ secret.NEXT_PUBLIC_AUTH_SECRET }}
+            NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
