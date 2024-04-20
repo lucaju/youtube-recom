@@ -63,7 +63,7 @@ jobs:
             DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
             AUTH_SECRET=${{ env.AUTH_SECRET }}
             NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
-          secret: |
+          secrets: |
             TEST_ENV="test"
             TEST_ENV2=test
             REGISTRY={{ env.REGISTRY }}
