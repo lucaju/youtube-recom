@@ -51,13 +51,14 @@ jobs:
           # build-args: AUTH_SECRET=${{ secrets.AUTH_SECRET }}, NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
           build-args: |
             AUTH_SECRET=${{ secrets.AUTH_SECRET }}
-            NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
+          # NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
           secret-envs: |
-            AUTH_SECRET=${{ secrets.AUTH_SECRET }}
             NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
-          secrets: |
-            AUTH_SECRET=${{ secrets.AUTH_SECRET }}
-            NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
+          # AUTH_SECRET=${{ secrets.AUTH_SECRET }}
+            
+          # secrets: |
+          #   AUTH_SECRET=${{ secrets.AUTH_SECRET }}
+          #   NEXT_PUBLIC_AUTH_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_SECRET }}
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
