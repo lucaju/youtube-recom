@@ -13,7 +13,6 @@ RUN apk add --no-cache \
 
 RUN echo "hello there"
 RUN echo $TEST_ENV
-RUN echo $TEST_ENV2
 RUN echo $REGISTRY
 RUN echo $DOCKER_USERNAME
 RUN echo $AUTH_SECRET
